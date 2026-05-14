@@ -1,0 +1,54 @@
+# --- Go build artifacts ---
+# Compiled binaries (project name + any one-off main packages)
+/clinics
+/api
+/server
+/cmd/*/clinics
+/cmd/*/api
+
+# Standard Go output / object files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Coverage / profiling
+*.coverprofile
+coverage.txt
+coverage.html
+*.prof
+
+# Vendored deps (we use modules; vendor/ should never be committed here)
+/vendor/
+
+# --- Environment & secrets ---
+# We read ../laravel-doc/.env, but anyone may stage a local override
+.env
+.env.*
+!.env.example
+
+# --- Editor / IDE ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- macOS / OS noise ---
+.DS_Store
+Thumbs.db
+
+# --- Logs & local state ---
+*.log
+/tmp/
+/.cache/
+
+# --- Generated artifacts ---
+# Generated OpenAPI server code (Step 3 will configure oapi-codegen).
+# Keep this commented out — typically the generated file IS committed so
+# CI/builds don't depend on local code-gen. Uncomment if you decide to
+# regenerate on every build instead.
+# /internal/api/openapi.gen.go
