@@ -4,39 +4,44 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 // Server is the strict-server implementation. Per-resource handler files
-// (patients.go, ...) attach methods to *Server. The Server owns the GORM
-// handle and is concurrency-safe to share across goroutines (GORM's *DB
-// itself is safe for concurrent use).
+// (patients.go, auth.go, ...) attach methods to *Server. The Server owns
+// the GORM handle plus the JWT signing material; it is concurrency-safe
+// to share across goroutines.
 type Server struct {
-	DB *gorm.DB
+	DB        *gorm.DB
+	jwtSecret []byte
+	jwtTTL    time.Duration
 }
 
-// Compile-time assertion that *Server satisfies the generated interface.
 var _ StrictServerInterface = (*Server)(nil)
 
-func NewServer(db *gorm.DB) *Server { return &Server{DB: db} }
+func NewServer(db *gorm.DB, jwtSecret []byte, jwtTTL time.Duration) *Server {
+	return &Server{DB: db, jwtSecret: jwtSecret, jwtTTL: jwtTTL}
+}
 
-// Register installs the strict handler onto a Gin router. We wire up the
-// HandlerErrorFunc so GORM's record-not-found becomes a 404 globally —
-// this is the "global error handler middleware" referenced in the plan.
-// Going through the strict-server's error funnel (instead of a separate
-// Gin middleware) is necessary because the typed handler-returned errors
-// never reach c.Errors / the gin chain.
+// Register installs the strict handler onto a Gin router. The strict
+// middleware chain handles bearer-token enforcement (authMiddleware) and
+// the typed-error funnel (handlerErrorFunc) maps GORM/auth sentinels to
+// HTTP status codes.
 func (s *Server) Register(r gin.IRouter) {
-	si := NewStrictHandlerWithOptions(s, nil, StrictGinServerOptions{
-		HandlerErrorFunc: handlerErrorFunc,
-	})
+	si := NewStrictHandlerWithOptions(s,
+		[]StrictMiddlewareFunc{s.authMiddleware},
+		StrictGinServerOptions{HandlerErrorFunc: handlerErrorFunc},
+	)
 	RegisterHandlers(r, si)
 }
 
 func handlerErrorFunc(c *gin.Context, err error) {
 	switch {
+	case errors.Is(err, errUnauthorized):
+		c.JSON(http.StatusUnauthorized, Error{Message: "Unauthorized"})
 	case errors.Is(err, gorm.ErrRecordNotFound):
 		c.JSON(http.StatusNotFound, Error{Message: "Resource not found"})
 	default:

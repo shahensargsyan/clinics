@@ -28,6 +28,7 @@ type AppConfig struct {
 	Key   string
 	Debug bool
 	URL   string
+	Port  int // HTTP listener port; Go-service-only, not in the Laravel .env.
 }
 
 type DBConfig struct {
@@ -86,6 +87,7 @@ func Load() (*Config, error) {
 			Key:   os.Getenv("APP_KEY"),
 			Debug: getEnvBool("APP_DEBUG", false),
 			URL:   getEnv("APP_URL", "http://localhost"),
+			Port:  getEnvInt("HTTP_PORT", 8080),
 		},
 		DB: DBConfig{
 			Connection: getEnv("DB_CONNECTION", "mysql"),
@@ -111,6 +113,9 @@ func Load() (*Config, error) {
 	}
 	if cfg.DB.Username == "" {
 		return nil, fmt.Errorf("config: DB_USERNAME is required")
+	}
+	if cfg.JWT.Secret == "" {
+		return nil, fmt.Errorf("config: JWT_SECRET is required")
 	}
 
 	cfg.DB.Host = resolveDBHost(cfg.DB.Host)
