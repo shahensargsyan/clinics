@@ -1,0 +1,31 @@
+# oapi-codegen configuration for the clinics API.
+#
+# Regenerate the server interface after editing api/openapi.yaml:
+#
+#   go generate ./internal/api/...
+#
+# or equivalently from the repo root:
+#
+#   go tool oapi-codegen -config codegen.yaml api/openapi.yaml
+#
+# The tool itself is pinned via the `tool` directive in go.mod.
+
+package: api
+output: internal/api/openapi.gen.go
+
+generate:
+  # Gin handler adapters + route registration helper.
+  gin-server: true
+  # Strict server: typed request/response structs; the gin layer dispatches
+  # to a StrictServerInterface we implement in Step 4. This is what the
+  # plan refers to.
+  strict-server: true
+  # Schema-derived Go types (Patient, PatientCreate, PaginationMeta, ...).
+  models: true
+  # Embed the spec as a Go variable so runtime middleware (e.g.
+  # request/response validation, /openapi.json endpoint) can access it.
+  embedded-spec: true
+
+output-options:
+  # Skip the long auto-generated banner; keeps diffs small.
+  skip-prune: false
