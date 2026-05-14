@@ -26,7 +26,7 @@ var patientSortCols = map[string]struct{}{
 }
 
 func (s *Server) ListPatients(ctx context.Context, req ListPatientsRequestObject) (ListPatientsResponseObject, error) {
-	opts := normalize(req.Params)
+	opts := normalize(req.Params.Page, req.Params.PerPage, req.Params.Search, req.Params.Sort)
 
 	base := s.DB.WithContext(ctx).Model(&models.Patient{})
 	base = applySearch(base, opts.search, patientSearchCols)

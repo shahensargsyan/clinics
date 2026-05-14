@@ -23,26 +23,30 @@ type pageOpts struct {
 	search  string
 }
 
-func normalize(params ListPatientsParams) pageOpts {
+// normalize takes the four pointer fields every list endpoint shares
+// (page/per_page/search/sort) and clamps them to the documented ranges.
+// Passing primitives lets every resource's strict ListParams struct call
+// in without us having to define one signature per resource.
+func normalize(page, perPage *int, search, sort *string) pageOpts {
 	opts := pageOpts{page: 1, perPage: defaultPerPage}
-	if params.Page != nil && *params.Page > 0 {
-		opts.page = *params.Page
+	if page != nil && *page > 0 {
+		opts.page = *page
 	}
-	if params.PerPage != nil {
+	if perPage != nil {
 		switch {
-		case *params.PerPage < 1:
+		case *perPage < 1:
 			opts.perPage = defaultPerPage
-		case *params.PerPage > maxPerPage:
+		case *perPage > maxPerPage:
 			opts.perPage = maxPerPage
 		default:
-			opts.perPage = *params.PerPage
+			opts.perPage = *perPage
 		}
 	}
-	if params.Search != nil {
-		opts.search = strings.TrimSpace(*params.Search)
+	if search != nil {
+		opts.search = strings.TrimSpace(*search)
 	}
-	if params.Sort != nil {
-		s := strings.TrimSpace(*params.Sort)
+	if sort != nil {
+		s := strings.TrimSpace(*sort)
 		switch {
 		case strings.HasPrefix(s, "-"):
 			opts.sortCol = s[1:]

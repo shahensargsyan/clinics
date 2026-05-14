@@ -26,6 +26,78 @@ const (
 	BearerAuthScopes bearerAuthContextKey = "bearerAuth.Scopes"
 )
 
+// Defines values for AppointmentStatus.
+const (
+	AppointmentStatusCancelled AppointmentStatus = "Cancelled"
+	AppointmentStatusCompleted AppointmentStatus = "Completed"
+	AppointmentStatusConfirmed AppointmentStatus = "Confirmed"
+	AppointmentStatusScheduled AppointmentStatus = "Scheduled"
+)
+
+// Valid indicates whether the value is a known member of the AppointmentStatus enum.
+func (e AppointmentStatus) Valid() bool {
+	switch e {
+	case AppointmentStatusCancelled:
+		return true
+	case AppointmentStatusCompleted:
+		return true
+	case AppointmentStatusConfirmed:
+		return true
+	case AppointmentStatusScheduled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AppointmentCreateStatus.
+const (
+	AppointmentCreateStatusCancelled AppointmentCreateStatus = "Cancelled"
+	AppointmentCreateStatusCompleted AppointmentCreateStatus = "Completed"
+	AppointmentCreateStatusConfirmed AppointmentCreateStatus = "Confirmed"
+	AppointmentCreateStatusScheduled AppointmentCreateStatus = "Scheduled"
+)
+
+// Valid indicates whether the value is a known member of the AppointmentCreateStatus enum.
+func (e AppointmentCreateStatus) Valid() bool {
+	switch e {
+	case AppointmentCreateStatusCancelled:
+		return true
+	case AppointmentCreateStatusCompleted:
+		return true
+	case AppointmentCreateStatusConfirmed:
+		return true
+	case AppointmentCreateStatusScheduled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AppointmentUpdateStatus.
+const (
+	AppointmentUpdateStatusCancelled AppointmentUpdateStatus = "Cancelled"
+	AppointmentUpdateStatusCompleted AppointmentUpdateStatus = "Completed"
+	AppointmentUpdateStatusConfirmed AppointmentUpdateStatus = "Confirmed"
+	AppointmentUpdateStatusScheduled AppointmentUpdateStatus = "Scheduled"
+)
+
+// Valid indicates whether the value is a known member of the AppointmentUpdateStatus enum.
+func (e AppointmentUpdateStatus) Valid() bool {
+	switch e {
+	case AppointmentUpdateStatusCancelled:
+		return true
+	case AppointmentUpdateStatusCompleted:
+		return true
+	case AppointmentUpdateStatusConfirmed:
+		return true
+	case AppointmentUpdateStatusScheduled:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LoginResponseTokenType.
 const (
 	Bearer LoginResponseTokenType = "Bearer"
@@ -104,6 +176,98 @@ func (e PatientUpdateGender) Valid() bool {
 	}
 }
 
+// Defines values for ListAppointmentsParamsStatus.
+const (
+	ListAppointmentsParamsStatusCancelled ListAppointmentsParamsStatus = "Cancelled"
+	ListAppointmentsParamsStatusCompleted ListAppointmentsParamsStatus = "Completed"
+	ListAppointmentsParamsStatusConfirmed ListAppointmentsParamsStatus = "Confirmed"
+	ListAppointmentsParamsStatusScheduled ListAppointmentsParamsStatus = "Scheduled"
+)
+
+// Valid indicates whether the value is a known member of the ListAppointmentsParamsStatus enum.
+func (e ListAppointmentsParamsStatus) Valid() bool {
+	switch e {
+	case ListAppointmentsParamsStatusCancelled:
+		return true
+	case ListAppointmentsParamsStatusCompleted:
+		return true
+	case ListAppointmentsParamsStatusConfirmed:
+		return true
+	case ListAppointmentsParamsStatusScheduled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Appointment defines model for Appointment.
+type Appointment struct {
+	AppointmentDateTime time.Time  `json:"appointment_date_time"`
+	CreatedAt           time.Time  `json:"created_at"`
+	DeletedAt           *time.Time `json:"deleted_at,omitempty"`
+	DurationMinutes     int        `json:"duration_minutes"`
+	Id                  int64      `json:"id"`
+
+	// Patient Minimal patient embed used inside appointment responses.
+	Patient        *AppointmentPatient `json:"patient,omitempty"`
+	PatientId      int64               `json:"patient_id"`
+	ReasonForVisit *string             `json:"reason_for_visit,omitempty"`
+	Status         AppointmentStatus   `json:"status"`
+	UpdatedAt      time.Time           `json:"updated_at"`
+
+	// User Minimal user embed used inside appointment responses.
+	User   *AppointmentUser `json:"user,omitempty"`
+	UserId int64            `json:"user_id"`
+}
+
+// AppointmentStatus defines model for Appointment.Status.
+type AppointmentStatus string
+
+// AppointmentCreate defines model for AppointmentCreate.
+type AppointmentCreate struct {
+	AppointmentDateTime time.Time                `json:"appointment_date_time"`
+	DurationMinutes     *int                     `json:"duration_minutes,omitempty"`
+	PatientId           int64                    `json:"patient_id"`
+	ReasonForVisit      *string                  `json:"reason_for_visit,omitempty"`
+	Status              *AppointmentCreateStatus `json:"status,omitempty"`
+	UserId              int64                    `json:"user_id"`
+}
+
+// AppointmentCreateStatus defines model for AppointmentCreate.Status.
+type AppointmentCreateStatus string
+
+// AppointmentEnvelope defines model for AppointmentEnvelope.
+type AppointmentEnvelope struct {
+	Data Appointment `json:"data"`
+}
+
+// AppointmentPatient Minimal patient embed used inside appointment responses.
+type AppointmentPatient struct {
+	FullName string `json:"full_name"`
+	Id       int64  `json:"id"`
+}
+
+// AppointmentUpdate Partial merge — only present fields are written. Same nullable
+// caveat as PatientUpdate.
+type AppointmentUpdate struct {
+	AppointmentDateTime *time.Time               `json:"appointment_date_time,omitempty"`
+	DurationMinutes     *int                     `json:"duration_minutes,omitempty"`
+	PatientId           *int64                   `json:"patient_id,omitempty"`
+	ReasonForVisit      *string                  `json:"reason_for_visit,omitempty"`
+	Status              *AppointmentUpdateStatus `json:"status,omitempty"`
+	UserId              *int64                   `json:"user_id,omitempty"`
+}
+
+// AppointmentUpdateStatus defines model for AppointmentUpdate.Status.
+type AppointmentUpdateStatus string
+
+// AppointmentUser Minimal user embed used inside appointment responses.
+type AppointmentUser struct {
+	Email *openapi_types.Email `json:"email,omitempty"`
+	Id    int64                `json:"id"`
+	Name  string               `json:"name"`
+}
+
 // AuthUser defines model for AuthUser.
 type AuthUser struct {
 	Email openapi_types.Email `json:"email"`
@@ -138,6 +302,12 @@ type LoginResponse struct {
 
 // LoginResponseTokenType defines model for LoginResponse.TokenType.
 type LoginResponseTokenType string
+
+// PaginatedAppointments defines model for PaginatedAppointments.
+type PaginatedAppointments struct {
+	Data []Appointment  `json:"data"`
+	Meta PaginationMeta `json:"meta"`
+}
 
 // PaginatedPatients defines model for PaginatedPatients.
 type PaginatedPatients struct {
@@ -215,6 +385,9 @@ type ValidationError struct {
 	Message string              `json:"message"`
 }
 
+// AppointmentId defines model for AppointmentId.
+type AppointmentId = int64
+
 // Page defines model for Page.
 type Page = int
 
@@ -242,6 +415,27 @@ type Unauthorized = Error
 // bearerAuthContextKey is the context key for bearerAuth security scheme
 type bearerAuthContextKey string
 
+// ListAppointmentsParams defines parameters for ListAppointments.
+type ListAppointmentsParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort      *Sort                         `form:"sort,omitempty" json:"sort,omitempty"`
+	Status    *ListAppointmentsParamsStatus `form:"status,omitempty" json:"status,omitempty"`
+	PatientId *int64                        `form:"patient_id,omitempty" json:"patient_id,omitempty"`
+	UserId    *int64                        `form:"user_id,omitempty" json:"user_id,omitempty"`
+}
+
+// ListAppointmentsParamsStatus defines parameters for ListAppointments.
+type ListAppointmentsParamsStatus string
+
 // ListPatientsParams defines parameters for ListPatients.
 type ListPatientsParams struct {
 	// Page 1-indexed page number.
@@ -257,6 +451,12 @@ type ListPatientsParams struct {
 	Sort *Sort `form:"sort,omitempty" json:"sort,omitempty"`
 }
 
+// CreateAppointmentJSONRequestBody defines body for CreateAppointment for application/json ContentType.
+type CreateAppointmentJSONRequestBody = AppointmentCreate
+
+// UpdateAppointmentJSONRequestBody defines body for UpdateAppointment for application/json ContentType.
+type UpdateAppointmentJSONRequestBody = AppointmentUpdate
+
 // LoginUserJSONRequestBody defines body for LoginUser for application/json ContentType.
 type LoginUserJSONRequestBody = LoginRequest
 
@@ -268,6 +468,21 @@ type UpdatePatientJSONRequestBody = PatientUpdate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// List appointments with pagination, search, sort, and filters.
+	// (GET /appointments)
+	ListAppointments(c *gin.Context, params ListAppointmentsParams)
+	// Create a new appointment.
+	// (POST /appointments)
+	CreateAppointment(c *gin.Context)
+	// Soft-delete an appointment.
+	// (DELETE /appointments/{id})
+	DeleteAppointment(c *gin.Context, id AppointmentId)
+	// Fetch a single appointment by id.
+	// (GET /appointments/{id})
+	GetAppointment(c *gin.Context, id AppointmentId)
+	// Update an appointment (partial merge).
+	// (PUT /appointments/{id})
+	UpdateAppointment(c *gin.Context, id AppointmentId)
 	// Authenticate and receive a JWT.
 	// (POST /auth/login)
 	LoginUser(c *gin.Context)
@@ -296,6 +511,179 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// ListAppointments operation middleware
+func (siw *ServerInterfaceWrapper) ListAppointments(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListAppointmentsParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "status" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "status", c.Request.URL.Query(), &params.Status, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter status: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "patient_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "patient_id", c.Request.URL.Query(), &params.PatientId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter patient_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "user_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "user_id", c.Request.URL.Query(), &params.UserId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter user_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListAppointments(c, params)
+}
+
+// CreateAppointment operation middleware
+func (siw *ServerInterfaceWrapper) CreateAppointment(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateAppointment(c)
+}
+
+// DeleteAppointment operation middleware
+func (siw *ServerInterfaceWrapper) DeleteAppointment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id AppointmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteAppointment(c, id)
+}
+
+// GetAppointment operation middleware
+func (siw *ServerInterfaceWrapper) GetAppointment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id AppointmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetAppointment(c, id)
+}
+
+// UpdateAppointment operation middleware
+func (siw *ServerInterfaceWrapper) UpdateAppointment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id AppointmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateAppointment(c, id)
+}
 
 // LoginUser operation middleware
 func (siw *ServerInterfaceWrapper) LoginUser(c *gin.Context) {
@@ -486,6 +874,11 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
+	router.GET(options.BaseURL+"/appointments", wrapper.ListAppointments)
+	router.POST(options.BaseURL+"/appointments", wrapper.CreateAppointment)
+	router.DELETE(options.BaseURL+"/appointments/:id", wrapper.DeleteAppointment)
+	router.GET(options.BaseURL+"/appointments/:id", wrapper.GetAppointment)
+	router.PUT(options.BaseURL+"/appointments/:id", wrapper.UpdateAppointment)
 	router.POST(options.BaseURL+"/auth/login", wrapper.LoginUser)
 	router.GET(options.BaseURL+"/patients", wrapper.ListPatients)
 	router.POST(options.BaseURL+"/patients", wrapper.CreatePatient)
@@ -501,6 +894,279 @@ type NotFoundJSONResponse Error
 type UnauthorizedJSONResponse Error
 
 type ValidationErrorJSONResponse ValidationError
+
+type ListAppointmentsRequestObject struct {
+	Params ListAppointmentsParams
+}
+
+type ListAppointmentsResponseObject interface {
+	VisitListAppointmentsResponse(w http.ResponseWriter) error
+}
+
+type ListAppointments200JSONResponse PaginatedAppointments
+
+func (response ListAppointments200JSONResponse) VisitListAppointmentsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAppointments400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response ListAppointments400JSONResponse) VisitListAppointmentsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAppointments401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListAppointments401JSONResponse) VisitListAppointmentsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAppointmentRequestObject struct {
+	Body *CreateAppointmentJSONRequestBody
+}
+
+type CreateAppointmentResponseObject interface {
+	VisitCreateAppointmentResponse(w http.ResponseWriter) error
+}
+
+type CreateAppointment201JSONResponse AppointmentEnvelope
+
+func (response CreateAppointment201JSONResponse) VisitCreateAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAppointment400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response CreateAppointment400JSONResponse) VisitCreateAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAppointment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateAppointment401JSONResponse) VisitCreateAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAppointment422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateAppointment422JSONResponse) VisitCreateAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteAppointmentRequestObject struct {
+	Id AppointmentId `json:"id"`
+}
+
+type DeleteAppointmentResponseObject interface {
+	VisitDeleteAppointmentResponse(w http.ResponseWriter) error
+}
+
+type DeleteAppointment204Response struct {
+}
+
+func (response DeleteAppointment204Response) VisitDeleteAppointmentResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteAppointment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteAppointment401JSONResponse) VisitDeleteAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteAppointment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteAppointment404JSONResponse) VisitDeleteAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetAppointmentRequestObject struct {
+	Id AppointmentId `json:"id"`
+}
+
+type GetAppointmentResponseObject interface {
+	VisitGetAppointmentResponse(w http.ResponseWriter) error
+}
+
+type GetAppointment200JSONResponse AppointmentEnvelope
+
+func (response GetAppointment200JSONResponse) VisitGetAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetAppointment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetAppointment401JSONResponse) VisitGetAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetAppointment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetAppointment404JSONResponse) VisitGetAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAppointmentRequestObject struct {
+	Id   AppointmentId `json:"id"`
+	Body *UpdateAppointmentJSONRequestBody
+}
+
+type UpdateAppointmentResponseObject interface {
+	VisitUpdateAppointmentResponse(w http.ResponseWriter) error
+}
+
+type UpdateAppointment200JSONResponse AppointmentEnvelope
+
+func (response UpdateAppointment200JSONResponse) VisitUpdateAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAppointment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateAppointment401JSONResponse) VisitUpdateAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAppointment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateAppointment404JSONResponse) VisitUpdateAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAppointment422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateAppointment422JSONResponse) VisitUpdateAppointmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
 
 type LoginUserRequestObject struct {
 	Body *LoginUserJSONRequestBody
@@ -827,6 +1493,21 @@ func (response UpdatePatient422JSONResponse) VisitUpdatePatientResponse(w http.R
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// List appointments with pagination, search, sort, and filters.
+	// (GET /appointments)
+	ListAppointments(ctx context.Context, request ListAppointmentsRequestObject) (ListAppointmentsResponseObject, error)
+	// Create a new appointment.
+	// (POST /appointments)
+	CreateAppointment(ctx context.Context, request CreateAppointmentRequestObject) (CreateAppointmentResponseObject, error)
+	// Soft-delete an appointment.
+	// (DELETE /appointments/{id})
+	DeleteAppointment(ctx context.Context, request DeleteAppointmentRequestObject) (DeleteAppointmentResponseObject, error)
+	// Fetch a single appointment by id.
+	// (GET /appointments/{id})
+	GetAppointment(ctx context.Context, request GetAppointmentRequestObject) (GetAppointmentResponseObject, error)
+	// Update an appointment (partial merge).
+	// (PUT /appointments/{id})
+	UpdateAppointment(ctx context.Context, request UpdateAppointmentRequestObject) (UpdateAppointmentResponseObject, error)
 	// Authenticate and receive a JWT.
 	// (POST /auth/login)
 	LoginUser(ctx context.Context, request LoginUserRequestObject) (LoginUserResponseObject, error)
@@ -902,6 +1583,148 @@ type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
 	options     StrictGinServerOptions
+}
+
+// ListAppointments operation middleware
+func (sh *strictHandler) ListAppointments(ctx *gin.Context, params ListAppointmentsParams) {
+	var request ListAppointmentsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListAppointments(ctx, request.(ListAppointmentsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListAppointments")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListAppointmentsResponseObject); ok {
+		if err := validResponse.VisitListAppointmentsResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateAppointment operation middleware
+func (sh *strictHandler) CreateAppointment(ctx *gin.Context) {
+	var request CreateAppointmentRequestObject
+
+	var body CreateAppointmentJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateAppointment(ctx, request.(CreateAppointmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateAppointment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateAppointmentResponseObject); ok {
+		if err := validResponse.VisitCreateAppointmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteAppointment operation middleware
+func (sh *strictHandler) DeleteAppointment(ctx *gin.Context, id AppointmentId) {
+	var request DeleteAppointmentRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteAppointment(ctx, request.(DeleteAppointmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteAppointment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteAppointmentResponseObject); ok {
+		if err := validResponse.VisitDeleteAppointmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetAppointment operation middleware
+func (sh *strictHandler) GetAppointment(ctx *gin.Context, id AppointmentId) {
+	var request GetAppointmentRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetAppointment(ctx, request.(GetAppointmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetAppointment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetAppointmentResponseObject); ok {
+		if err := validResponse.VisitGetAppointmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateAppointment operation middleware
+func (sh *strictHandler) UpdateAppointment(ctx *gin.Context, id AppointmentId) {
+	var request UpdateAppointmentRequestObject
+
+	request.Id = id
+
+	var body UpdateAppointmentJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateAppointment(ctx, request.(UpdateAppointmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateAppointment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateAppointmentResponseObject); ok {
+		if err := validResponse.VisitUpdateAppointmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
 }
 
 // LoginUser operation middleware
@@ -1082,54 +1905,64 @@ func (sh *strictHandler) UpdatePatient(ctx *gin.Context, id PatientId) {
 // const string: with thousands of chunks the chained `+` fold is several
 // times slower for the Go compiler than parsing a slice literal.
 var swaggerSpec = []string{
-	"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",
+	"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",
 }
 
 // decodeSpec returns the embedded OpenAPI spec as raw JSON bytes,
