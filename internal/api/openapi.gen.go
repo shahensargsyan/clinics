@@ -98,6 +98,69 @@ func (e AppointmentUpdateStatus) Valid() bool {
 	}
 }
 
+// Defines values for InvoicePaymentStatus.
+const (
+	InvoicePaymentStatusPaid    InvoicePaymentStatus = "Paid"
+	InvoicePaymentStatusPartial InvoicePaymentStatus = "Partial"
+	InvoicePaymentStatusPending InvoicePaymentStatus = "Pending"
+)
+
+// Valid indicates whether the value is a known member of the InvoicePaymentStatus enum.
+func (e InvoicePaymentStatus) Valid() bool {
+	switch e {
+	case InvoicePaymentStatusPaid:
+		return true
+	case InvoicePaymentStatusPartial:
+		return true
+	case InvoicePaymentStatusPending:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for InvoiceCreatePaymentStatus.
+const (
+	InvoiceCreatePaymentStatusPaid    InvoiceCreatePaymentStatus = "Paid"
+	InvoiceCreatePaymentStatusPartial InvoiceCreatePaymentStatus = "Partial"
+	InvoiceCreatePaymentStatusPending InvoiceCreatePaymentStatus = "Pending"
+)
+
+// Valid indicates whether the value is a known member of the InvoiceCreatePaymentStatus enum.
+func (e InvoiceCreatePaymentStatus) Valid() bool {
+	switch e {
+	case InvoiceCreatePaymentStatusPaid:
+		return true
+	case InvoiceCreatePaymentStatusPartial:
+		return true
+	case InvoiceCreatePaymentStatusPending:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for InvoiceUpdatePaymentStatus.
+const (
+	InvoiceUpdatePaymentStatusPaid    InvoiceUpdatePaymentStatus = "Paid"
+	InvoiceUpdatePaymentStatusPartial InvoiceUpdatePaymentStatus = "Partial"
+	InvoiceUpdatePaymentStatusPending InvoiceUpdatePaymentStatus = "Pending"
+)
+
+// Valid indicates whether the value is a known member of the InvoiceUpdatePaymentStatus enum.
+func (e InvoiceUpdatePaymentStatus) Valid() bool {
+	switch e {
+	case InvoiceUpdatePaymentStatusPaid:
+		return true
+	case InvoiceUpdatePaymentStatusPartial:
+		return true
+	case InvoiceUpdatePaymentStatusPending:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LoginResponseTokenType.
 const (
 	Bearer LoginResponseTokenType = "Bearer"
@@ -200,6 +263,27 @@ func (e ListAppointmentsParamsStatus) Valid() bool {
 	}
 }
 
+// Defines values for ListInvoicesParamsPaymentStatus.
+const (
+	ListInvoicesParamsPaymentStatusPaid    ListInvoicesParamsPaymentStatus = "Paid"
+	ListInvoicesParamsPaymentStatusPartial ListInvoicesParamsPaymentStatus = "Partial"
+	ListInvoicesParamsPaymentStatusPending ListInvoicesParamsPaymentStatus = "Pending"
+)
+
+// Valid indicates whether the value is a known member of the ListInvoicesParamsPaymentStatus enum.
+func (e ListInvoicesParamsPaymentStatus) Valid() bool {
+	switch e {
+	case ListInvoicesParamsPaymentStatusPaid:
+		return true
+	case ListInvoicesParamsPaymentStatusPartial:
+		return true
+	case ListInvoicesParamsPaymentStatusPending:
+		return true
+	default:
+		return false
+	}
+}
+
 // Appointment defines model for Appointment.
 type Appointment struct {
 	AppointmentDateTime time.Time  `json:"appointment_date_time"`
@@ -275,11 +359,202 @@ type AuthUser struct {
 	Name  string              `json:"name"`
 }
 
+// Category defines model for Category.
+type Category struct {
+	CreatedAt time.Time  `json:"created_at"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	Id        int64      `json:"id"`
+	Name      string     `json:"name"`
+	ParentId  int64      `json:"parent_id"`
+	Slug      string     `json:"slug"`
+	UpdatedAt time.Time  `json:"updated_at"`
+}
+
+// CategoryCreate defines model for CategoryCreate.
+type CategoryCreate struct {
+	Name     string  `json:"name"`
+	ParentId *int64  `json:"parent_id,omitempty"`
+	Slug     *string `json:"slug,omitempty"`
+}
+
+// CategoryEnvelope defines model for CategoryEnvelope.
+type CategoryEnvelope struct {
+	Data Category `json:"data"`
+}
+
+// CategoryUpdate defines model for CategoryUpdate.
+type CategoryUpdate struct {
+	Name     *string `json:"name,omitempty"`
+	ParentId *int64  `json:"parent_id,omitempty"`
+	Slug     *string `json:"slug,omitempty"`
+}
+
+// CephalometricAnalysis defines model for CephalometricAnalysis.
+type CephalometricAnalysis struct {
+	AnalysisDate      *openapi_types.Date `json:"analysis_date,omitempty"`
+	BjorkSumDegrees   *string             `json:"bjork_sum_degrees,omitempty"`
+	Conclusions       *string             `json:"conclusions,omitempty"`
+	CreatedAt         time.Time           `json:"created_at"`
+	GoGnLengthMm      *string             `json:"go_gn_length_mm,omitempty"`
+	Id                int64               `json:"id"`
+	InterincisalAngle *string             `json:"interincisal_angle,omitempty"`
+	NGoMeDegrees      *string             `json:"n_go_me_degrees,omitempty"`
+	NlMlDegrees       *string             `json:"nl_ml_degrees,omitempty"`
+	PatientId         int64               `json:"patient_id"`
+	SnPaPrime         *string             `json:"sn_pa_prime,omitempty"`
+	SnaDegrees        *string             `json:"sna_degrees,omitempty"`
+	SnbDegrees        *string             `json:"snb_degrees,omitempty"`
+	SnpogDegrees      *string             `json:"snpog_degrees,omitempty"`
+	UpdatedAt         time.Time           `json:"updated_at"`
+	WitsAppraisalMm   *string             `json:"wits_appraisal_mm,omitempty"`
+}
+
+// CephalometricAnalysisCreate defines model for CephalometricAnalysisCreate.
+type CephalometricAnalysisCreate struct {
+	AnalysisDate      *openapi_types.Date `json:"analysis_date,omitempty"`
+	BjorkSumDegrees   *string             `json:"bjork_sum_degrees,omitempty"`
+	Conclusions       *string             `json:"conclusions,omitempty"`
+	GoGnLengthMm      *string             `json:"go_gn_length_mm,omitempty"`
+	InterincisalAngle *string             `json:"interincisal_angle,omitempty"`
+	NGoMeDegrees      *string             `json:"n_go_me_degrees,omitempty"`
+	NlMlDegrees       *string             `json:"nl_ml_degrees,omitempty"`
+	PatientId         int64               `json:"patient_id"`
+	SnPaPrime         *string             `json:"sn_pa_prime,omitempty"`
+	SnaDegrees        *string             `json:"sna_degrees,omitempty"`
+	SnbDegrees        *string             `json:"snb_degrees,omitempty"`
+	SnpogDegrees      *string             `json:"snpog_degrees,omitempty"`
+	WitsAppraisalMm   *string             `json:"wits_appraisal_mm,omitempty"`
+}
+
+// CephalometricAnalysisEnvelope defines model for CephalometricAnalysisEnvelope.
+type CephalometricAnalysisEnvelope struct {
+	Data CephalometricAnalysis `json:"data"`
+}
+
+// CephalometricAnalysisUpdate defines model for CephalometricAnalysisUpdate.
+type CephalometricAnalysisUpdate struct {
+	AnalysisDate      *openapi_types.Date `json:"analysis_date,omitempty"`
+	BjorkSumDegrees   *string             `json:"bjork_sum_degrees,omitempty"`
+	Conclusions       *string             `json:"conclusions,omitempty"`
+	GoGnLengthMm      *string             `json:"go_gn_length_mm,omitempty"`
+	InterincisalAngle *string             `json:"interincisal_angle,omitempty"`
+	NGoMeDegrees      *string             `json:"n_go_me_degrees,omitempty"`
+	NlMlDegrees       *string             `json:"nl_ml_degrees,omitempty"`
+	SnPaPrime         *string             `json:"sn_pa_prime,omitempty"`
+	SnaDegrees        *string             `json:"sna_degrees,omitempty"`
+	SnbDegrees        *string             `json:"snb_degrees,omitempty"`
+	SnpogDegrees      *string             `json:"snpog_degrees,omitempty"`
+	WitsAppraisalMm   *string             `json:"wits_appraisal_mm,omitempty"`
+}
+
+// DiagnosticAsset defines model for DiagnosticAsset.
+type DiagnosticAsset struct {
+	CreatedAt   time.Time `json:"created_at"`
+	HasBiometry bool      `json:"has_biometry"`
+	HasCbct     bool      `json:"has_cbct"`
+	HasOptg     bool      `json:"has_optg"`
+	HasPhotos   bool      `json:"has_photos"`
+	HasTrg      bool      `json:"has_trg"`
+	Id          int64     `json:"id"`
+	PatientId   int64     `json:"patient_id"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// DiagnosticAssetCreate defines model for DiagnosticAssetCreate.
+type DiagnosticAssetCreate struct {
+	HasBiometry *bool `json:"has_biometry,omitempty"`
+	HasCbct     *bool `json:"has_cbct,omitempty"`
+	HasOptg     *bool `json:"has_optg,omitempty"`
+	HasPhotos   *bool `json:"has_photos,omitempty"`
+	HasTrg      *bool `json:"has_trg,omitempty"`
+	PatientId   int64 `json:"patient_id"`
+}
+
+// DiagnosticAssetEnvelope defines model for DiagnosticAssetEnvelope.
+type DiagnosticAssetEnvelope struct {
+	Data DiagnosticAsset `json:"data"`
+}
+
+// DiagnosticAssetUpdate defines model for DiagnosticAssetUpdate.
+type DiagnosticAssetUpdate struct {
+	HasBiometry *bool `json:"has_biometry,omitempty"`
+	HasCbct     *bool `json:"has_cbct,omitempty"`
+	HasOptg     *bool `json:"has_optg,omitempty"`
+	HasPhotos   *bool `json:"has_photos,omitempty"`
+	HasTrg      *bool `json:"has_trg,omitempty"`
+}
+
 // Error defines model for Error.
 type Error struct {
 	// Message Human-readable error message.
 	Message string `json:"message"`
 }
+
+// Invoice defines model for Invoice.
+type Invoice struct {
+	// AmountPaid Decimal as string with 2-fraction precision.
+	AmountPaid string `json:"amount_paid"`
+
+	// Appointment Minimal appointment embed used inside invoice responses.
+	Appointment   *InvoiceAppointment  `json:"appointment,omitempty"`
+	AppointmentId int64                `json:"appointment_id"`
+	CreatedAt     time.Time            `json:"created_at"`
+	DeletedAt     *time.Time           `json:"deleted_at,omitempty"`
+	Id            int64                `json:"id"`
+	InvoiceDate   openapi_types.Date   `json:"invoice_date"`
+	PaymentStatus InvoicePaymentStatus `json:"payment_status"`
+
+	// RemainingBalance Computed accessor — `total_amount` − `amount_paid`. Read-only.
+	RemainingBalance *string `json:"remaining_balance,omitempty"`
+
+	// TotalAmount Decimal as string with 2-fraction precision. Matches Laravel's `decimal:2` cast.
+	TotalAmount string    `json:"total_amount"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// InvoicePaymentStatus defines model for Invoice.PaymentStatus.
+type InvoicePaymentStatus string
+
+// InvoiceAppointment Minimal appointment embed used inside invoice responses.
+type InvoiceAppointment struct {
+	AppointmentDateTime time.Time `json:"appointment_date_time"`
+	Id                  int64     `json:"id"`
+
+	// Patient Minimal patient embed used inside appointment responses.
+	Patient *AppointmentPatient `json:"patient,omitempty"`
+}
+
+// InvoiceCreate defines model for InvoiceCreate.
+type InvoiceCreate struct {
+	// AmountPaid Decimal as string. Must be 0 ≤ amount_paid ≤ total_amount.
+	AmountPaid    *string                     `json:"amount_paid,omitempty"`
+	AppointmentId int64                       `json:"appointment_id"`
+	InvoiceDate   openapi_types.Date          `json:"invoice_date"`
+	PaymentStatus *InvoiceCreatePaymentStatus `json:"payment_status,omitempty"`
+
+	// TotalAmount Decimal as string, up to 2 fraction digits. Must be ≥ 0.
+	TotalAmount string `json:"total_amount"`
+}
+
+// InvoiceCreatePaymentStatus defines model for InvoiceCreate.PaymentStatus.
+type InvoiceCreatePaymentStatus string
+
+// InvoiceEnvelope defines model for InvoiceEnvelope.
+type InvoiceEnvelope struct {
+	Data Invoice `json:"data"`
+}
+
+// InvoiceUpdate Partial merge — only present fields are written. Same nullable
+// caveat as PatientUpdate / AppointmentUpdate.
+type InvoiceUpdate struct {
+	AmountPaid    *string                     `json:"amount_paid,omitempty"`
+	InvoiceDate   *openapi_types.Date         `json:"invoice_date,omitempty"`
+	PaymentStatus *InvoiceUpdatePaymentStatus `json:"payment_status,omitempty"`
+	TotalAmount   *string                     `json:"total_amount,omitempty"`
+}
+
+// InvoiceUpdatePaymentStatus defines model for InvoiceUpdate.PaymentStatus.
+type InvoiceUpdatePaymentStatus string
 
 // LoginRequest defines model for LoginRequest.
 type LoginRequest struct {
@@ -303,16 +578,186 @@ type LoginResponse struct {
 // LoginResponseTokenType defines model for LoginResponse.TokenType.
 type LoginResponseTokenType string
 
+// MechanotherapyVisit defines model for MechanotherapyVisit.
+type MechanotherapyVisit struct {
+	CreatedAt       time.Time           `json:"created_at"`
+	DoctorSignature *string             `json:"doctor_signature,omitempty"`
+	Id              int64               `json:"id"`
+	PatientId       int64               `json:"patient_id"`
+	ProcedureNotes  *string             `json:"procedure_notes,omitempty"`
+	Recommendations *string             `json:"recommendations,omitempty"`
+	UpdatedAt       time.Time           `json:"updated_at"`
+	VisitDate       *openapi_types.Date `json:"visit_date,omitempty"`
+}
+
+// MechanotherapyVisitCreate defines model for MechanotherapyVisitCreate.
+type MechanotherapyVisitCreate struct {
+	DoctorSignature *string             `json:"doctor_signature,omitempty"`
+	PatientId       int64               `json:"patient_id"`
+	ProcedureNotes  *string             `json:"procedure_notes,omitempty"`
+	Recommendations *string             `json:"recommendations,omitempty"`
+	VisitDate       *openapi_types.Date `json:"visit_date,omitempty"`
+}
+
+// MechanotherapyVisitEnvelope defines model for MechanotherapyVisitEnvelope.
+type MechanotherapyVisitEnvelope struct {
+	Data MechanotherapyVisit `json:"data"`
+}
+
+// MechanotherapyVisitUpdate defines model for MechanotherapyVisitUpdate.
+type MechanotherapyVisitUpdate struct {
+	DoctorSignature *string             `json:"doctor_signature,omitempty"`
+	ProcedureNotes  *string             `json:"procedure_notes,omitempty"`
+	Recommendations *string             `json:"recommendations,omitempty"`
+	VisitDate       *openapi_types.Date `json:"visit_date,omitempty"`
+}
+
+// MedicalHistory defines model for MedicalHistory.
+type MedicalHistory struct {
+	ConditionName string     `json:"condition_name"`
+	CreatedAt     time.Time  `json:"created_at"`
+	DeletedAt     *time.Time `json:"deleted_at,omitempty"`
+	Id            int64      `json:"id"`
+	Notes         *string    `json:"notes,omitempty"`
+	PatientId     int64      `json:"patient_id"`
+	UpdatedAt     time.Time  `json:"updated_at"`
+}
+
+// MedicalHistoryCreate defines model for MedicalHistoryCreate.
+type MedicalHistoryCreate struct {
+	ConditionName string  `json:"condition_name"`
+	Notes         *string `json:"notes,omitempty"`
+	PatientId     int64   `json:"patient_id"`
+}
+
+// MedicalHistoryEnvelope defines model for MedicalHistoryEnvelope.
+type MedicalHistoryEnvelope struct {
+	Data MedicalHistory `json:"data"`
+}
+
+// MedicalHistoryUpdate defines model for MedicalHistoryUpdate.
+type MedicalHistoryUpdate struct {
+	ConditionName *string `json:"condition_name,omitempty"`
+	Notes         *string `json:"notes,omitempty"`
+}
+
+// OrthodonticsMedicalHistory defines model for OrthodonticsMedicalHistory.
+type OrthodonticsMedicalHistory struct {
+	BiometricFindings      *string    `json:"biometric_findings,omitempty"`
+	CreatedAt              time.Time  `json:"created_at"`
+	DeletedAt              *time.Time `json:"deleted_at,omitempty"`
+	EntPathology           *string    `json:"ent_pathology,omitempty"`
+	FunctionalDisturbances *string    `json:"functional_disturbances,omitempty"`
+	Id                     int64      `json:"id"`
+	MainComplaints         *string    `json:"main_complaints,omitempty"`
+	PatientId              int64      `json:"patient_id"`
+	PosturalDisturbances   *string    `json:"postural_disturbances,omitempty"`
+	TreatmentPlan          *string    `json:"treatment_plan,omitempty"`
+	UpdatedAt              time.Time  `json:"updated_at"`
+}
+
+// OrthodonticsMedicalHistoryCreate defines model for OrthodonticsMedicalHistoryCreate.
+type OrthodonticsMedicalHistoryCreate struct {
+	BiometricFindings      *string `json:"biometric_findings,omitempty"`
+	EntPathology           *string `json:"ent_pathology,omitempty"`
+	FunctionalDisturbances *string `json:"functional_disturbances,omitempty"`
+	MainComplaints         *string `json:"main_complaints,omitempty"`
+	PatientId              int64   `json:"patient_id"`
+	PosturalDisturbances   *string `json:"postural_disturbances,omitempty"`
+	TreatmentPlan          *string `json:"treatment_plan,omitempty"`
+}
+
+// OrthodonticsMedicalHistoryEnvelope defines model for OrthodonticsMedicalHistoryEnvelope.
+type OrthodonticsMedicalHistoryEnvelope struct {
+	Data OrthodonticsMedicalHistory `json:"data"`
+}
+
+// OrthodonticsMedicalHistoryUpdate defines model for OrthodonticsMedicalHistoryUpdate.
+type OrthodonticsMedicalHistoryUpdate struct {
+	BiometricFindings      *string `json:"biometric_findings,omitempty"`
+	EntPathology           *string `json:"ent_pathology,omitempty"`
+	FunctionalDisturbances *string `json:"functional_disturbances,omitempty"`
+	MainComplaints         *string `json:"main_complaints,omitempty"`
+	PosturalDisturbances   *string `json:"postural_disturbances,omitempty"`
+	TreatmentPlan          *string `json:"treatment_plan,omitempty"`
+}
+
 // PaginatedAppointments defines model for PaginatedAppointments.
 type PaginatedAppointments struct {
 	Data []Appointment  `json:"data"`
 	Meta PaginationMeta `json:"meta"`
 }
 
+// PaginatedCategories defines model for PaginatedCategories.
+type PaginatedCategories struct {
+	Data []Category     `json:"data"`
+	Meta PaginationMeta `json:"meta"`
+}
+
+// PaginatedCephalometricAnalyses defines model for PaginatedCephalometricAnalyses.
+type PaginatedCephalometricAnalyses struct {
+	Data []CephalometricAnalysis `json:"data"`
+	Meta PaginationMeta          `json:"meta"`
+}
+
+// PaginatedDiagnosticAssets defines model for PaginatedDiagnosticAssets.
+type PaginatedDiagnosticAssets struct {
+	Data []DiagnosticAsset `json:"data"`
+	Meta PaginationMeta    `json:"meta"`
+}
+
+// PaginatedInvoices defines model for PaginatedInvoices.
+type PaginatedInvoices struct {
+	Data []Invoice      `json:"data"`
+	Meta PaginationMeta `json:"meta"`
+}
+
+// PaginatedMechanotherapyVisits defines model for PaginatedMechanotherapyVisits.
+type PaginatedMechanotherapyVisits struct {
+	Data []MechanotherapyVisit `json:"data"`
+	Meta PaginationMeta        `json:"meta"`
+}
+
+// PaginatedMedicalHistory defines model for PaginatedMedicalHistory.
+type PaginatedMedicalHistory struct {
+	Data []MedicalHistory `json:"data"`
+	Meta PaginationMeta   `json:"meta"`
+}
+
+// PaginatedOrthodonticsMedicalHistories defines model for PaginatedOrthodonticsMedicalHistories.
+type PaginatedOrthodonticsMedicalHistories struct {
+	Data []OrthodonticsMedicalHistory `json:"data"`
+	Meta PaginationMeta               `json:"meta"`
+}
+
 // PaginatedPatients defines model for PaginatedPatients.
 type PaginatedPatients struct {
 	Data []Patient      `json:"data"`
 	Meta PaginationMeta `json:"meta"`
+}
+
+// PaginatedToothMeasurements defines model for PaginatedToothMeasurements.
+type PaginatedToothMeasurements struct {
+	Data []ToothMeasurement `json:"data"`
+	Meta PaginationMeta     `json:"meta"`
+}
+
+// PaginatedTreatments defines model for PaginatedTreatments.
+type PaginatedTreatments struct {
+	Data []Treatment    `json:"data"`
+	Meta PaginationMeta `json:"meta"`
+}
+
+// PaginatedUsers defines model for PaginatedUsers.
+type PaginatedUsers struct {
+	Data []User         `json:"data"`
+	Meta PaginationMeta `json:"meta"`
+}
+
+// PaginatedVisitTreatments defines model for PaginatedVisitTreatments.
+type PaginatedVisitTreatments struct {
+	Data []VisitTreatment `json:"data"`
+	Meta PaginationMeta   `json:"meta"`
 }
 
 // PaginationMeta defines model for PaginationMeta.
@@ -363,6 +808,18 @@ type PatientEnvelope struct {
 	Data Patient `json:"data"`
 }
 
+// PatientSummary Aggregated clinical snapshot for one patient — replaces Laravel's
+// `OrthodonticsMedicalHistoryCrudController` rollup.
+type PatientSummary struct {
+	CephalometricAnalyses      *[]CephalometricAnalysis    `json:"cephalometric_analyses,omitempty"`
+	DiagnosticAssets           *[]DiagnosticAsset          `json:"diagnostic_assets,omitempty"`
+	MechanotherapyVisits       *[]MechanotherapyVisit      `json:"mechanotherapy_visits,omitempty"`
+	MedicalHistory             *[]MedicalHistory           `json:"medical_history,omitempty"`
+	OrthodonticsMedicalHistory *OrthodonticsMedicalHistory `json:"orthodontics_medical_history,omitempty"`
+	PatientId                  int64                       `json:"patient_id"`
+	ToothMeasurements          *[]ToothMeasurement         `json:"tooth_measurements,omitempty"`
+}
+
 // PatientUpdate All fields are optional. Only keys present in the request body
 // are written; explicit `null` clears a nullable column.
 type PatientUpdate struct {
@@ -378,6 +835,103 @@ type PatientUpdate struct {
 // PatientUpdateGender defines model for PatientUpdate.Gender.
 type PatientUpdateGender string
 
+// ToothMeasurement defines model for ToothMeasurement.
+type ToothMeasurement struct {
+	CreatedAt          time.Time `json:"created_at"`
+	Id                 int64     `json:"id"`
+	MesiodistalWidthMm *string   `json:"mesiodistal_width_mm,omitempty"`
+	PatientId          int64     `json:"patient_id"`
+	ToothNumber        int       `json:"tooth_number"`
+	UpdatedAt          time.Time `json:"updated_at"`
+}
+
+// ToothMeasurementCreate defines model for ToothMeasurementCreate.
+type ToothMeasurementCreate struct {
+	MesiodistalWidthMm *string `json:"mesiodistal_width_mm,omitempty"`
+	PatientId          int64   `json:"patient_id"`
+	ToothNumber        int     `json:"tooth_number"`
+}
+
+// ToothMeasurementEnvelope defines model for ToothMeasurementEnvelope.
+type ToothMeasurementEnvelope struct {
+	Data ToothMeasurement `json:"data"`
+}
+
+// ToothMeasurementUpdate defines model for ToothMeasurementUpdate.
+type ToothMeasurementUpdate struct {
+	MesiodistalWidthMm *string `json:"mesiodistal_width_mm,omitempty"`
+	ToothNumber        *int    `json:"tooth_number,omitempty"`
+}
+
+// Treatment defines model for Treatment.
+type Treatment struct {
+	Category *struct {
+		Id   *int64  `json:"id,omitempty"`
+		Name *string `json:"name,omitempty"`
+	} `json:"category,omitempty"`
+	CategoryId   *int64     `json:"category_id,omitempty"`
+	CreatedAt    time.Time  `json:"created_at"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
+	Description  *string    `json:"description,omitempty"`
+	Id           int64      `json:"id"`
+	Name         string     `json:"name"`
+	StandardCost string     `json:"standard_cost"`
+	UpdatedAt    time.Time  `json:"updated_at"`
+}
+
+// TreatmentCreate defines model for TreatmentCreate.
+type TreatmentCreate struct {
+	CategoryId   *int64  `json:"category_id,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	Name         string  `json:"name"`
+	StandardCost string  `json:"standard_cost"`
+}
+
+// TreatmentEnvelope defines model for TreatmentEnvelope.
+type TreatmentEnvelope struct {
+	Data Treatment `json:"data"`
+}
+
+// TreatmentUpdate defines model for TreatmentUpdate.
+type TreatmentUpdate struct {
+	CategoryId   *int64  `json:"category_id,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	StandardCost *string `json:"standard_cost,omitempty"`
+}
+
+// User defines model for User.
+type User struct {
+	CreatedAt       time.Time           `json:"created_at"`
+	DeletedAt       *time.Time          `json:"deleted_at,omitempty"`
+	Email           openapi_types.Email `json:"email"`
+	EmailVerifiedAt *time.Time          `json:"email_verified_at,omitempty"`
+	Id              int64               `json:"id"`
+	Name            string              `json:"name"`
+	UpdatedAt       time.Time           `json:"updated_at"`
+}
+
+// UserCreate defines model for UserCreate.
+type UserCreate struct {
+	Email    openapi_types.Email `json:"email"`
+	Name     string              `json:"name"`
+	Password string              `json:"password"`
+}
+
+// UserEnvelope defines model for UserEnvelope.
+type UserEnvelope struct {
+	Data User `json:"data"`
+}
+
+// UserUpdate defines model for UserUpdate.
+type UserUpdate struct {
+	Email *openapi_types.Email `json:"email,omitempty"`
+	Name  *string              `json:"name,omitempty"`
+
+	// Password Optional. Omit to keep the existing password.
+	Password *string `json:"password,omitempty"`
+}
+
 // ValidationError defines model for ValidationError.
 type ValidationError struct {
 	// Errors Map of field name → list of error messages, matching Laravel's 422 shape.
@@ -385,8 +939,67 @@ type ValidationError struct {
 	Message string              `json:"message"`
 }
 
+// VisitTreatment defines model for VisitTreatment.
+type VisitTreatment struct {
+	ActualCost      string     `json:"actual_cost"`
+	AppointmentId   int64      `json:"appointment_id"`
+	CreatedAt       time.Time  `json:"created_at"`
+	DeletedAt       *time.Time `json:"deleted_at,omitempty"`
+	Id              int64      `json:"id"`
+	Notes           *string    `json:"notes,omitempty"`
+	Quantity        int        `json:"quantity"`
+	ToothIdentifier *string    `json:"tooth_identifier,omitempty"`
+
+	// TotalCost actual_cost × quantity (computed).
+	TotalCost *string `json:"total_cost,omitempty"`
+	Treatment *struct {
+		Id   *int64  `json:"id,omitempty"`
+		Name *string `json:"name,omitempty"`
+	} `json:"treatment,omitempty"`
+	TreatmentId int64     `json:"treatment_id"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	UserId      *int64    `json:"user_id,omitempty"`
+}
+
+// VisitTreatmentCreate defines model for VisitTreatmentCreate.
+type VisitTreatmentCreate struct {
+	ActualCost      string  `json:"actual_cost"`
+	AppointmentId   int64   `json:"appointment_id"`
+	Notes           *string `json:"notes,omitempty"`
+	Quantity        *int    `json:"quantity,omitempty"`
+	ToothIdentifier *string `json:"tooth_identifier,omitempty"`
+	TreatmentId     int64   `json:"treatment_id"`
+	UserId          *int64  `json:"user_id,omitempty"`
+}
+
+// VisitTreatmentEnvelope defines model for VisitTreatmentEnvelope.
+type VisitTreatmentEnvelope struct {
+	Data VisitTreatment `json:"data"`
+}
+
+// VisitTreatmentUpdate defines model for VisitTreatmentUpdate.
+type VisitTreatmentUpdate struct {
+	ActualCost      *string `json:"actual_cost,omitempty"`
+	Notes           *string `json:"notes,omitempty"`
+	Quantity        *int    `json:"quantity,omitempty"`
+	ToothIdentifier *string `json:"tooth_identifier,omitempty"`
+	UserId          *int64  `json:"user_id,omitempty"`
+}
+
 // AppointmentId defines model for AppointmentId.
 type AppointmentId = int64
+
+// CategoryId defines model for CategoryId.
+type CategoryId = int64
+
+// ClinicalRecordId defines model for ClinicalRecordId.
+type ClinicalRecordId = int64
+
+// InvoiceId defines model for InvoiceId.
+type InvoiceId = int64
+
+// MedicalHistoryId defines model for MedicalHistoryId.
+type MedicalHistoryId = int64
 
 // Page defines model for Page.
 type Page = int
@@ -402,6 +1015,15 @@ type Search = string
 
 // Sort defines model for Sort.
 type Sort = string
+
+// TreatmentId defines model for TreatmentId.
+type TreatmentId = int64
+
+// UserId defines model for UserId.
+type UserId = int64
+
+// VisitTreatmentId defines model for VisitTreatmentId.
+type VisitTreatmentId = int64
 
 // BadRequest defines model for BadRequest.
 type BadRequest = Error
@@ -436,6 +1058,113 @@ type ListAppointmentsParams struct {
 // ListAppointmentsParamsStatus defines parameters for ListAppointments.
 type ListAppointmentsParamsStatus string
 
+// ListCategoriesParams defines parameters for ListCategories.
+type ListCategoriesParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort     *Sort  `form:"sort,omitempty" json:"sort,omitempty"`
+	ParentId *int64 `form:"parent_id,omitempty" json:"parent_id,omitempty"`
+}
+
+// ListCephalometricAnalysesParams defines parameters for ListCephalometricAnalyses.
+type ListCephalometricAnalysesParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort      *Sort  `form:"sort,omitempty" json:"sort,omitempty"`
+	PatientId *int64 `form:"patient_id,omitempty" json:"patient_id,omitempty"`
+}
+
+// ListDiagnosticAssetsParams defines parameters for ListDiagnosticAssets.
+type ListDiagnosticAssetsParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage   *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+	PatientId *int64   `form:"patient_id,omitempty" json:"patient_id,omitempty"`
+}
+
+// ListInvoicesParams defines parameters for ListInvoices.
+type ListInvoicesParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort          *Sort                            `form:"sort,omitempty" json:"sort,omitempty"`
+	PaymentStatus *ListInvoicesParamsPaymentStatus `form:"payment_status,omitempty" json:"payment_status,omitempty"`
+	AppointmentId *int64                           `form:"appointment_id,omitempty" json:"appointment_id,omitempty"`
+}
+
+// ListInvoicesParamsPaymentStatus defines parameters for ListInvoices.
+type ListInvoicesParamsPaymentStatus string
+
+// ListMechanotherapyVisitsParams defines parameters for ListMechanotherapyVisits.
+type ListMechanotherapyVisitsParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort      *Sort  `form:"sort,omitempty" json:"sort,omitempty"`
+	PatientId *int64 `form:"patient_id,omitempty" json:"patient_id,omitempty"`
+}
+
+// ListMedicalHistoryParams defines parameters for ListMedicalHistory.
+type ListMedicalHistoryParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort      *Sort  `form:"sort,omitempty" json:"sort,omitempty"`
+	PatientId *int64 `form:"patient_id,omitempty" json:"patient_id,omitempty"`
+}
+
+// ListOrthodonticsMedicalHistoriesParams defines parameters for ListOrthodonticsMedicalHistories.
+type ListOrthodonticsMedicalHistoriesParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort      *Sort  `form:"sort,omitempty" json:"sort,omitempty"`
+	PatientId *int64 `form:"patient_id,omitempty" json:"patient_id,omitempty"`
+}
+
 // ListPatientsParams defines parameters for ListPatients.
 type ListPatientsParams struct {
 	// Page 1-indexed page number.
@@ -451,6 +1180,64 @@ type ListPatientsParams struct {
 	Sort *Sort `form:"sort,omitempty" json:"sort,omitempty"`
 }
 
+// ListToothMeasurementsParams defines parameters for ListToothMeasurements.
+type ListToothMeasurementsParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage   *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+	PatientId *int64   `form:"patient_id,omitempty" json:"patient_id,omitempty"`
+}
+
+// ListTreatmentsParams defines parameters for ListTreatments.
+type ListTreatmentsParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort       *Sort  `form:"sort,omitempty" json:"sort,omitempty"`
+	CategoryId *int64 `form:"category_id,omitempty" json:"category_id,omitempty"`
+}
+
+// ListUsersParams defines parameters for ListUsers.
+type ListUsersParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort *Sort `form:"sort,omitempty" json:"sort,omitempty"`
+}
+
+// ListVisitTreatmentsParams defines parameters for ListVisitTreatments.
+type ListVisitTreatmentsParams struct {
+	// Page 1-indexed page number.
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Page size.
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+
+	// Search Case-insensitive substring match across the resource's searchable columns.
+	Search *Search `form:"search,omitempty" json:"search,omitempty"`
+
+	// Sort Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+	Sort          *Sort  `form:"sort,omitempty" json:"sort,omitempty"`
+	AppointmentId *int64 `form:"appointment_id,omitempty" json:"appointment_id,omitempty"`
+	TreatmentId   *int64 `form:"treatment_id,omitempty" json:"treatment_id,omitempty"`
+}
+
 // CreateAppointmentJSONRequestBody defines body for CreateAppointment for application/json ContentType.
 type CreateAppointmentJSONRequestBody = AppointmentCreate
 
@@ -460,11 +1247,77 @@ type UpdateAppointmentJSONRequestBody = AppointmentUpdate
 // LoginUserJSONRequestBody defines body for LoginUser for application/json ContentType.
 type LoginUserJSONRequestBody = LoginRequest
 
+// CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
+type CreateCategoryJSONRequestBody = CategoryCreate
+
+// UpdateCategoryJSONRequestBody defines body for UpdateCategory for application/json ContentType.
+type UpdateCategoryJSONRequestBody = CategoryUpdate
+
+// CreateCephalometricAnalysisJSONRequestBody defines body for CreateCephalometricAnalysis for application/json ContentType.
+type CreateCephalometricAnalysisJSONRequestBody = CephalometricAnalysisCreate
+
+// UpdateCephalometricAnalysisJSONRequestBody defines body for UpdateCephalometricAnalysis for application/json ContentType.
+type UpdateCephalometricAnalysisJSONRequestBody = CephalometricAnalysisUpdate
+
+// CreateDiagnosticAssetJSONRequestBody defines body for CreateDiagnosticAsset for application/json ContentType.
+type CreateDiagnosticAssetJSONRequestBody = DiagnosticAssetCreate
+
+// UpdateDiagnosticAssetJSONRequestBody defines body for UpdateDiagnosticAsset for application/json ContentType.
+type UpdateDiagnosticAssetJSONRequestBody = DiagnosticAssetUpdate
+
+// CreateInvoiceJSONRequestBody defines body for CreateInvoice for application/json ContentType.
+type CreateInvoiceJSONRequestBody = InvoiceCreate
+
+// UpdateInvoiceJSONRequestBody defines body for UpdateInvoice for application/json ContentType.
+type UpdateInvoiceJSONRequestBody = InvoiceUpdate
+
+// CreateMechanotherapyVisitJSONRequestBody defines body for CreateMechanotherapyVisit for application/json ContentType.
+type CreateMechanotherapyVisitJSONRequestBody = MechanotherapyVisitCreate
+
+// UpdateMechanotherapyVisitJSONRequestBody defines body for UpdateMechanotherapyVisit for application/json ContentType.
+type UpdateMechanotherapyVisitJSONRequestBody = MechanotherapyVisitUpdate
+
+// CreateMedicalHistoryJSONRequestBody defines body for CreateMedicalHistory for application/json ContentType.
+type CreateMedicalHistoryJSONRequestBody = MedicalHistoryCreate
+
+// UpdateMedicalHistoryJSONRequestBody defines body for UpdateMedicalHistory for application/json ContentType.
+type UpdateMedicalHistoryJSONRequestBody = MedicalHistoryUpdate
+
+// CreateOrthodonticsMedicalHistoryJSONRequestBody defines body for CreateOrthodonticsMedicalHistory for application/json ContentType.
+type CreateOrthodonticsMedicalHistoryJSONRequestBody = OrthodonticsMedicalHistoryCreate
+
+// UpdateOrthodonticsMedicalHistoryJSONRequestBody defines body for UpdateOrthodonticsMedicalHistory for application/json ContentType.
+type UpdateOrthodonticsMedicalHistoryJSONRequestBody = OrthodonticsMedicalHistoryUpdate
+
 // CreatePatientJSONRequestBody defines body for CreatePatient for application/json ContentType.
 type CreatePatientJSONRequestBody = PatientCreate
 
 // UpdatePatientJSONRequestBody defines body for UpdatePatient for application/json ContentType.
 type UpdatePatientJSONRequestBody = PatientUpdate
+
+// CreateToothMeasurementJSONRequestBody defines body for CreateToothMeasurement for application/json ContentType.
+type CreateToothMeasurementJSONRequestBody = ToothMeasurementCreate
+
+// UpdateToothMeasurementJSONRequestBody defines body for UpdateToothMeasurement for application/json ContentType.
+type UpdateToothMeasurementJSONRequestBody = ToothMeasurementUpdate
+
+// CreateTreatmentJSONRequestBody defines body for CreateTreatment for application/json ContentType.
+type CreateTreatmentJSONRequestBody = TreatmentCreate
+
+// UpdateTreatmentJSONRequestBody defines body for UpdateTreatment for application/json ContentType.
+type UpdateTreatmentJSONRequestBody = TreatmentUpdate
+
+// CreateUserJSONRequestBody defines body for CreateUser for application/json ContentType.
+type CreateUserJSONRequestBody = UserCreate
+
+// UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
+type UpdateUserJSONRequestBody = UserUpdate
+
+// CreateVisitTreatmentJSONRequestBody defines body for CreateVisitTreatment for application/json ContentType.
+type CreateVisitTreatmentJSONRequestBody = VisitTreatmentCreate
+
+// UpdateVisitTreatmentJSONRequestBody defines body for UpdateVisitTreatment for application/json ContentType.
+type UpdateVisitTreatmentJSONRequestBody = VisitTreatmentUpdate
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -486,6 +1339,111 @@ type ServerInterface interface {
 	// Authenticate and receive a JWT.
 	// (POST /auth/login)
 	LoginUser(c *gin.Context)
+	// List categories with pagination/search/sort.
+	// (GET /categories)
+	ListCategories(c *gin.Context, params ListCategoriesParams)
+
+	// (POST /categories)
+	CreateCategory(c *gin.Context)
+
+	// (DELETE /categories/{id})
+	DeleteCategory(c *gin.Context, id CategoryId)
+
+	// (GET /categories/{id})
+	GetCategory(c *gin.Context, id CategoryId)
+
+	// (PUT /categories/{id})
+	UpdateCategory(c *gin.Context, id CategoryId)
+
+	// (GET /cephalometric-analyses)
+	ListCephalometricAnalyses(c *gin.Context, params ListCephalometricAnalysesParams)
+
+	// (POST /cephalometric-analyses)
+	CreateCephalometricAnalysis(c *gin.Context)
+
+	// (DELETE /cephalometric-analyses/{id})
+	DeleteCephalometricAnalysis(c *gin.Context, id ClinicalRecordId)
+
+	// (GET /cephalometric-analyses/{id})
+	GetCephalometricAnalysis(c *gin.Context, id ClinicalRecordId)
+
+	// (PUT /cephalometric-analyses/{id})
+	UpdateCephalometricAnalysis(c *gin.Context, id ClinicalRecordId)
+
+	// (GET /diagnostic-assets)
+	ListDiagnosticAssets(c *gin.Context, params ListDiagnosticAssetsParams)
+
+	// (POST /diagnostic-assets)
+	CreateDiagnosticAsset(c *gin.Context)
+
+	// (DELETE /diagnostic-assets/{id})
+	DeleteDiagnosticAsset(c *gin.Context, id ClinicalRecordId)
+
+	// (GET /diagnostic-assets/{id})
+	GetDiagnosticAsset(c *gin.Context, id ClinicalRecordId)
+
+	// (PUT /diagnostic-assets/{id})
+	UpdateDiagnosticAsset(c *gin.Context, id ClinicalRecordId)
+	// List invoices with pagination, sort, and filters.
+	// (GET /invoices)
+	ListInvoices(c *gin.Context, params ListInvoicesParams)
+	// Create a new invoice.
+	// (POST /invoices)
+	CreateInvoice(c *gin.Context)
+	// Soft-delete an invoice.
+	// (DELETE /invoices/{id})
+	DeleteInvoice(c *gin.Context, id InvoiceId)
+	// Fetch a single invoice by id.
+	// (GET /invoices/{id})
+	GetInvoice(c *gin.Context, id InvoiceId)
+	// Update an invoice (partial merge).
+	// (PUT /invoices/{id})
+	UpdateInvoice(c *gin.Context, id InvoiceId)
+
+	// (GET /mechanotherapy-visits)
+	ListMechanotherapyVisits(c *gin.Context, params ListMechanotherapyVisitsParams)
+
+	// (POST /mechanotherapy-visits)
+	CreateMechanotherapyVisit(c *gin.Context)
+
+	// (DELETE /mechanotherapy-visits/{id})
+	DeleteMechanotherapyVisit(c *gin.Context, id ClinicalRecordId)
+
+	// (GET /mechanotherapy-visits/{id})
+	GetMechanotherapyVisit(c *gin.Context, id ClinicalRecordId)
+
+	// (PUT /mechanotherapy-visits/{id})
+	UpdateMechanotherapyVisit(c *gin.Context, id ClinicalRecordId)
+
+	// (GET /medical-history)
+	ListMedicalHistory(c *gin.Context, params ListMedicalHistoryParams)
+
+	// (POST /medical-history)
+	CreateMedicalHistory(c *gin.Context)
+
+	// (DELETE /medical-history/{id})
+	DeleteMedicalHistory(c *gin.Context, id MedicalHistoryId)
+
+	// (GET /medical-history/{id})
+	GetMedicalHistory(c *gin.Context, id MedicalHistoryId)
+
+	// (PUT /medical-history/{id})
+	UpdateMedicalHistory(c *gin.Context, id MedicalHistoryId)
+
+	// (GET /orthodontics-medical-histories)
+	ListOrthodonticsMedicalHistories(c *gin.Context, params ListOrthodonticsMedicalHistoriesParams)
+
+	// (POST /orthodontics-medical-histories)
+	CreateOrthodonticsMedicalHistory(c *gin.Context)
+
+	// (DELETE /orthodontics-medical-histories/{id})
+	DeleteOrthodonticsMedicalHistory(c *gin.Context, id ClinicalRecordId)
+
+	// (GET /orthodontics-medical-histories/{id})
+	GetOrthodonticsMedicalHistory(c *gin.Context, id ClinicalRecordId)
+
+	// (PUT /orthodontics-medical-histories/{id})
+	UpdateOrthodonticsMedicalHistory(c *gin.Context, id ClinicalRecordId)
 	// List patients with pagination, search, and sort.
 	// (GET /patients)
 	ListPatients(c *gin.Context, params ListPatientsParams)
@@ -501,6 +1459,69 @@ type ServerInterface interface {
 	// Update a patient (partial merge).
 	// (PUT /patients/{id})
 	UpdatePatient(c *gin.Context, id PatientId)
+	// Aggregate of every clinical sub-record for one patient.
+	// (GET /patients/{id}/summary)
+	GetPatientSummary(c *gin.Context, id PatientId)
+
+	// (GET /tooth-measurements)
+	ListToothMeasurements(c *gin.Context, params ListToothMeasurementsParams)
+
+	// (POST /tooth-measurements)
+	CreateToothMeasurement(c *gin.Context)
+
+	// (DELETE /tooth-measurements/{id})
+	DeleteToothMeasurement(c *gin.Context, id ClinicalRecordId)
+
+	// (GET /tooth-measurements/{id})
+	GetToothMeasurement(c *gin.Context, id ClinicalRecordId)
+
+	// (PUT /tooth-measurements/{id})
+	UpdateToothMeasurement(c *gin.Context, id ClinicalRecordId)
+
+	// (GET /treatments)
+	ListTreatments(c *gin.Context, params ListTreatmentsParams)
+
+	// (POST /treatments)
+	CreateTreatment(c *gin.Context)
+
+	// (DELETE /treatments/{id})
+	DeleteTreatment(c *gin.Context, id TreatmentId)
+
+	// (GET /treatments/{id})
+	GetTreatment(c *gin.Context, id TreatmentId)
+
+	// (PUT /treatments/{id})
+	UpdateTreatment(c *gin.Context, id TreatmentId)
+
+	// (GET /users)
+	ListUsers(c *gin.Context, params ListUsersParams)
+
+	// (POST /users)
+	CreateUser(c *gin.Context)
+
+	// (DELETE /users/{id})
+	DeleteUser(c *gin.Context, id UserId)
+
+	// (GET /users/{id})
+	GetUser(c *gin.Context, id UserId)
+
+	// (PUT /users/{id})
+	UpdateUser(c *gin.Context, id UserId)
+
+	// (GET /visit-treatments)
+	ListVisitTreatments(c *gin.Context, params ListVisitTreatmentsParams)
+
+	// (POST /visit-treatments)
+	CreateVisitTreatment(c *gin.Context)
+
+	// (DELETE /visit-treatments/{id})
+	DeleteVisitTreatment(c *gin.Context, id VisitTreatmentId)
+
+	// (GET /visit-treatments/{id})
+	GetVisitTreatment(c *gin.Context, id VisitTreatmentId)
+
+	// (PUT /visit-treatments/{id})
+	UpdateVisitTreatment(c *gin.Context, id VisitTreatmentId)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -698,6 +1719,1089 @@ func (siw *ServerInterfaceWrapper) LoginUser(c *gin.Context) {
 	siw.Handler.LoginUser(c)
 }
 
+// ListCategories operation middleware
+func (siw *ServerInterfaceWrapper) ListCategories(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListCategoriesParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "parent_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "parent_id", c.Request.URL.Query(), &params.ParentId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter parent_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListCategories(c, params)
+}
+
+// CreateCategory operation middleware
+func (siw *ServerInterfaceWrapper) CreateCategory(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateCategory(c)
+}
+
+// DeleteCategory operation middleware
+func (siw *ServerInterfaceWrapper) DeleteCategory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id CategoryId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteCategory(c, id)
+}
+
+// GetCategory operation middleware
+func (siw *ServerInterfaceWrapper) GetCategory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id CategoryId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCategory(c, id)
+}
+
+// UpdateCategory operation middleware
+func (siw *ServerInterfaceWrapper) UpdateCategory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id CategoryId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateCategory(c, id)
+}
+
+// ListCephalometricAnalyses operation middleware
+func (siw *ServerInterfaceWrapper) ListCephalometricAnalyses(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListCephalometricAnalysesParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "patient_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "patient_id", c.Request.URL.Query(), &params.PatientId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter patient_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListCephalometricAnalyses(c, params)
+}
+
+// CreateCephalometricAnalysis operation middleware
+func (siw *ServerInterfaceWrapper) CreateCephalometricAnalysis(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateCephalometricAnalysis(c)
+}
+
+// DeleteCephalometricAnalysis operation middleware
+func (siw *ServerInterfaceWrapper) DeleteCephalometricAnalysis(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteCephalometricAnalysis(c, id)
+}
+
+// GetCephalometricAnalysis operation middleware
+func (siw *ServerInterfaceWrapper) GetCephalometricAnalysis(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCephalometricAnalysis(c, id)
+}
+
+// UpdateCephalometricAnalysis operation middleware
+func (siw *ServerInterfaceWrapper) UpdateCephalometricAnalysis(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateCephalometricAnalysis(c, id)
+}
+
+// ListDiagnosticAssets operation middleware
+func (siw *ServerInterfaceWrapper) ListDiagnosticAssets(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListDiagnosticAssetsParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "patient_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "patient_id", c.Request.URL.Query(), &params.PatientId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter patient_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListDiagnosticAssets(c, params)
+}
+
+// CreateDiagnosticAsset operation middleware
+func (siw *ServerInterfaceWrapper) CreateDiagnosticAsset(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateDiagnosticAsset(c)
+}
+
+// DeleteDiagnosticAsset operation middleware
+func (siw *ServerInterfaceWrapper) DeleteDiagnosticAsset(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteDiagnosticAsset(c, id)
+}
+
+// GetDiagnosticAsset operation middleware
+func (siw *ServerInterfaceWrapper) GetDiagnosticAsset(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetDiagnosticAsset(c, id)
+}
+
+// UpdateDiagnosticAsset operation middleware
+func (siw *ServerInterfaceWrapper) UpdateDiagnosticAsset(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateDiagnosticAsset(c, id)
+}
+
+// ListInvoices operation middleware
+func (siw *ServerInterfaceWrapper) ListInvoices(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListInvoicesParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "payment_status" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "payment_status", c.Request.URL.Query(), &params.PaymentStatus, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter payment_status: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "appointment_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "appointment_id", c.Request.URL.Query(), &params.AppointmentId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter appointment_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListInvoices(c, params)
+}
+
+// CreateInvoice operation middleware
+func (siw *ServerInterfaceWrapper) CreateInvoice(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateInvoice(c)
+}
+
+// DeleteInvoice operation middleware
+func (siw *ServerInterfaceWrapper) DeleteInvoice(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id InvoiceId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteInvoice(c, id)
+}
+
+// GetInvoice operation middleware
+func (siw *ServerInterfaceWrapper) GetInvoice(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id InvoiceId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetInvoice(c, id)
+}
+
+// UpdateInvoice operation middleware
+func (siw *ServerInterfaceWrapper) UpdateInvoice(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id InvoiceId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateInvoice(c, id)
+}
+
+// ListMechanotherapyVisits operation middleware
+func (siw *ServerInterfaceWrapper) ListMechanotherapyVisits(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListMechanotherapyVisitsParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "patient_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "patient_id", c.Request.URL.Query(), &params.PatientId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter patient_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListMechanotherapyVisits(c, params)
+}
+
+// CreateMechanotherapyVisit operation middleware
+func (siw *ServerInterfaceWrapper) CreateMechanotherapyVisit(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateMechanotherapyVisit(c)
+}
+
+// DeleteMechanotherapyVisit operation middleware
+func (siw *ServerInterfaceWrapper) DeleteMechanotherapyVisit(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteMechanotherapyVisit(c, id)
+}
+
+// GetMechanotherapyVisit operation middleware
+func (siw *ServerInterfaceWrapper) GetMechanotherapyVisit(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetMechanotherapyVisit(c, id)
+}
+
+// UpdateMechanotherapyVisit operation middleware
+func (siw *ServerInterfaceWrapper) UpdateMechanotherapyVisit(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateMechanotherapyVisit(c, id)
+}
+
+// ListMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) ListMedicalHistory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListMedicalHistoryParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "patient_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "patient_id", c.Request.URL.Query(), &params.PatientId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter patient_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListMedicalHistory(c, params)
+}
+
+// CreateMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) CreateMedicalHistory(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateMedicalHistory(c)
+}
+
+// DeleteMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) DeleteMedicalHistory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id MedicalHistoryId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteMedicalHistory(c, id)
+}
+
+// GetMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) GetMedicalHistory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id MedicalHistoryId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetMedicalHistory(c, id)
+}
+
+// UpdateMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) UpdateMedicalHistory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id MedicalHistoryId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateMedicalHistory(c, id)
+}
+
+// ListOrthodonticsMedicalHistories operation middleware
+func (siw *ServerInterfaceWrapper) ListOrthodonticsMedicalHistories(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListOrthodonticsMedicalHistoriesParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "patient_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "patient_id", c.Request.URL.Query(), &params.PatientId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter patient_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListOrthodonticsMedicalHistories(c, params)
+}
+
+// CreateOrthodonticsMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) CreateOrthodonticsMedicalHistory(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateOrthodonticsMedicalHistory(c)
+}
+
+// DeleteOrthodonticsMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) DeleteOrthodonticsMedicalHistory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteOrthodonticsMedicalHistory(c, id)
+}
+
+// GetOrthodonticsMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) GetOrthodonticsMedicalHistory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetOrthodonticsMedicalHistory(c, id)
+}
+
+// UpdateOrthodonticsMedicalHistory operation middleware
+func (siw *ServerInterfaceWrapper) UpdateOrthodonticsMedicalHistory(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateOrthodonticsMedicalHistory(c, id)
+}
+
 // ListPatients operation middleware
 func (siw *ServerInterfaceWrapper) ListPatients(c *gin.Context) {
 
@@ -847,6 +2951,645 @@ func (siw *ServerInterfaceWrapper) UpdatePatient(c *gin.Context) {
 	siw.Handler.UpdatePatient(c, id)
 }
 
+// GetPatientSummary operation middleware
+func (siw *ServerInterfaceWrapper) GetPatientSummary(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id PatientId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetPatientSummary(c, id)
+}
+
+// ListToothMeasurements operation middleware
+func (siw *ServerInterfaceWrapper) ListToothMeasurements(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListToothMeasurementsParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "patient_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "patient_id", c.Request.URL.Query(), &params.PatientId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter patient_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListToothMeasurements(c, params)
+}
+
+// CreateToothMeasurement operation middleware
+func (siw *ServerInterfaceWrapper) CreateToothMeasurement(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateToothMeasurement(c)
+}
+
+// DeleteToothMeasurement operation middleware
+func (siw *ServerInterfaceWrapper) DeleteToothMeasurement(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteToothMeasurement(c, id)
+}
+
+// GetToothMeasurement operation middleware
+func (siw *ServerInterfaceWrapper) GetToothMeasurement(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetToothMeasurement(c, id)
+}
+
+// UpdateToothMeasurement operation middleware
+func (siw *ServerInterfaceWrapper) UpdateToothMeasurement(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id ClinicalRecordId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateToothMeasurement(c, id)
+}
+
+// ListTreatments operation middleware
+func (siw *ServerInterfaceWrapper) ListTreatments(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListTreatmentsParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "category_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "category_id", c.Request.URL.Query(), &params.CategoryId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter category_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListTreatments(c, params)
+}
+
+// CreateTreatment operation middleware
+func (siw *ServerInterfaceWrapper) CreateTreatment(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateTreatment(c)
+}
+
+// DeleteTreatment operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTreatment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id TreatmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteTreatment(c, id)
+}
+
+// GetTreatment operation middleware
+func (siw *ServerInterfaceWrapper) GetTreatment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id TreatmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetTreatment(c, id)
+}
+
+// UpdateTreatment operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTreatment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id TreatmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateTreatment(c, id)
+}
+
+// ListUsers operation middleware
+func (siw *ServerInterfaceWrapper) ListUsers(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListUsersParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListUsers(c, params)
+}
+
+// CreateUser operation middleware
+func (siw *ServerInterfaceWrapper) CreateUser(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateUser(c)
+}
+
+// DeleteUser operation middleware
+func (siw *ServerInterfaceWrapper) DeleteUser(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id UserId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteUser(c, id)
+}
+
+// GetUser operation middleware
+func (siw *ServerInterfaceWrapper) GetUser(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id UserId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetUser(c, id)
+}
+
+// UpdateUser operation middleware
+func (siw *ServerInterfaceWrapper) UpdateUser(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id UserId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateUser(c, id)
+}
+
+// ListVisitTreatments operation middleware
+func (siw *ServerInterfaceWrapper) ListVisitTreatments(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListVisitTreatmentsParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", c.Request.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "per_page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "per_page", c.Request.URL.Query(), &params.PerPage, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter per_page: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", c.Request.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter search: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "appointment_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "appointment_id", c.Request.URL.Query(), &params.AppointmentId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter appointment_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "treatment_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "treatment_id", c.Request.URL.Query(), &params.TreatmentId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter treatment_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListVisitTreatments(c, params)
+}
+
+// CreateVisitTreatment operation middleware
+func (siw *ServerInterfaceWrapper) CreateVisitTreatment(c *gin.Context) {
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.CreateVisitTreatment(c)
+}
+
+// DeleteVisitTreatment operation middleware
+func (siw *ServerInterfaceWrapper) DeleteVisitTreatment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id VisitTreatmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.DeleteVisitTreatment(c, id)
+}
+
+// GetVisitTreatment operation middleware
+func (siw *ServerInterfaceWrapper) GetVisitTreatment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id VisitTreatmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetVisitTreatment(c, id)
+}
+
+// UpdateVisitTreatment operation middleware
+func (siw *ServerInterfaceWrapper) UpdateVisitTreatment(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id VisitTreatmentId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(string(BearerAuthScopes), []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UpdateVisitTreatment(c, id)
+}
+
 // GinServerOptions provides options for the Gin server.
 type GinServerOptions struct {
 	BaseURL      string
@@ -880,11 +3623,67 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/appointments/:id", wrapper.GetAppointment)
 	router.PUT(options.BaseURL+"/appointments/:id", wrapper.UpdateAppointment)
 	router.POST(options.BaseURL+"/auth/login", wrapper.LoginUser)
+	router.GET(options.BaseURL+"/categories", wrapper.ListCategories)
+	router.POST(options.BaseURL+"/categories", wrapper.CreateCategory)
+	router.DELETE(options.BaseURL+"/categories/:id", wrapper.DeleteCategory)
+	router.GET(options.BaseURL+"/categories/:id", wrapper.GetCategory)
+	router.PUT(options.BaseURL+"/categories/:id", wrapper.UpdateCategory)
+	router.GET(options.BaseURL+"/cephalometric-analyses", wrapper.ListCephalometricAnalyses)
+	router.POST(options.BaseURL+"/cephalometric-analyses", wrapper.CreateCephalometricAnalysis)
+	router.DELETE(options.BaseURL+"/cephalometric-analyses/:id", wrapper.DeleteCephalometricAnalysis)
+	router.GET(options.BaseURL+"/cephalometric-analyses/:id", wrapper.GetCephalometricAnalysis)
+	router.PUT(options.BaseURL+"/cephalometric-analyses/:id", wrapper.UpdateCephalometricAnalysis)
+	router.GET(options.BaseURL+"/diagnostic-assets", wrapper.ListDiagnosticAssets)
+	router.POST(options.BaseURL+"/diagnostic-assets", wrapper.CreateDiagnosticAsset)
+	router.DELETE(options.BaseURL+"/diagnostic-assets/:id", wrapper.DeleteDiagnosticAsset)
+	router.GET(options.BaseURL+"/diagnostic-assets/:id", wrapper.GetDiagnosticAsset)
+	router.PUT(options.BaseURL+"/diagnostic-assets/:id", wrapper.UpdateDiagnosticAsset)
+	router.GET(options.BaseURL+"/invoices", wrapper.ListInvoices)
+	router.POST(options.BaseURL+"/invoices", wrapper.CreateInvoice)
+	router.DELETE(options.BaseURL+"/invoices/:id", wrapper.DeleteInvoice)
+	router.GET(options.BaseURL+"/invoices/:id", wrapper.GetInvoice)
+	router.PUT(options.BaseURL+"/invoices/:id", wrapper.UpdateInvoice)
+	router.GET(options.BaseURL+"/mechanotherapy-visits", wrapper.ListMechanotherapyVisits)
+	router.POST(options.BaseURL+"/mechanotherapy-visits", wrapper.CreateMechanotherapyVisit)
+	router.DELETE(options.BaseURL+"/mechanotherapy-visits/:id", wrapper.DeleteMechanotherapyVisit)
+	router.GET(options.BaseURL+"/mechanotherapy-visits/:id", wrapper.GetMechanotherapyVisit)
+	router.PUT(options.BaseURL+"/mechanotherapy-visits/:id", wrapper.UpdateMechanotherapyVisit)
+	router.GET(options.BaseURL+"/medical-history", wrapper.ListMedicalHistory)
+	router.POST(options.BaseURL+"/medical-history", wrapper.CreateMedicalHistory)
+	router.DELETE(options.BaseURL+"/medical-history/:id", wrapper.DeleteMedicalHistory)
+	router.GET(options.BaseURL+"/medical-history/:id", wrapper.GetMedicalHistory)
+	router.PUT(options.BaseURL+"/medical-history/:id", wrapper.UpdateMedicalHistory)
+	router.GET(options.BaseURL+"/orthodontics-medical-histories", wrapper.ListOrthodonticsMedicalHistories)
+	router.POST(options.BaseURL+"/orthodontics-medical-histories", wrapper.CreateOrthodonticsMedicalHistory)
+	router.DELETE(options.BaseURL+"/orthodontics-medical-histories/:id", wrapper.DeleteOrthodonticsMedicalHistory)
+	router.GET(options.BaseURL+"/orthodontics-medical-histories/:id", wrapper.GetOrthodonticsMedicalHistory)
+	router.PUT(options.BaseURL+"/orthodontics-medical-histories/:id", wrapper.UpdateOrthodonticsMedicalHistory)
 	router.GET(options.BaseURL+"/patients", wrapper.ListPatients)
 	router.POST(options.BaseURL+"/patients", wrapper.CreatePatient)
 	router.DELETE(options.BaseURL+"/patients/:id", wrapper.DeletePatient)
 	router.GET(options.BaseURL+"/patients/:id", wrapper.GetPatient)
 	router.PUT(options.BaseURL+"/patients/:id", wrapper.UpdatePatient)
+	router.GET(options.BaseURL+"/patients/:id/summary", wrapper.GetPatientSummary)
+	router.GET(options.BaseURL+"/tooth-measurements", wrapper.ListToothMeasurements)
+	router.POST(options.BaseURL+"/tooth-measurements", wrapper.CreateToothMeasurement)
+	router.DELETE(options.BaseURL+"/tooth-measurements/:id", wrapper.DeleteToothMeasurement)
+	router.GET(options.BaseURL+"/tooth-measurements/:id", wrapper.GetToothMeasurement)
+	router.PUT(options.BaseURL+"/tooth-measurements/:id", wrapper.UpdateToothMeasurement)
+	router.GET(options.BaseURL+"/treatments", wrapper.ListTreatments)
+	router.POST(options.BaseURL+"/treatments", wrapper.CreateTreatment)
+	router.DELETE(options.BaseURL+"/treatments/:id", wrapper.DeleteTreatment)
+	router.GET(options.BaseURL+"/treatments/:id", wrapper.GetTreatment)
+	router.PUT(options.BaseURL+"/treatments/:id", wrapper.UpdateTreatment)
+	router.GET(options.BaseURL+"/users", wrapper.ListUsers)
+	router.POST(options.BaseURL+"/users", wrapper.CreateUser)
+	router.DELETE(options.BaseURL+"/users/:id", wrapper.DeleteUser)
+	router.GET(options.BaseURL+"/users/:id", wrapper.GetUser)
+	router.PUT(options.BaseURL+"/users/:id", wrapper.UpdateUser)
+	router.GET(options.BaseURL+"/visit-treatments", wrapper.ListVisitTreatments)
+	router.POST(options.BaseURL+"/visit-treatments", wrapper.CreateVisitTreatment)
+	router.DELETE(options.BaseURL+"/visit-treatments/:id", wrapper.DeleteVisitTreatment)
+	router.GET(options.BaseURL+"/visit-treatments/:id", wrapper.GetVisitTreatment)
+	router.PUT(options.BaseURL+"/visit-treatments/:id", wrapper.UpdateVisitTreatment)
 }
 
 type BadRequestJSONResponse Error
@@ -1218,6 +4017,1749 @@ func (response LoginUser422JSONResponse) VisitLoginUserResponse(w http.ResponseW
 	return err
 }
 
+type ListCategoriesRequestObject struct {
+	Params ListCategoriesParams
+}
+
+type ListCategoriesResponseObject interface {
+	VisitListCategoriesResponse(w http.ResponseWriter) error
+}
+
+type ListCategories200JSONResponse PaginatedCategories
+
+func (response ListCategories200JSONResponse) VisitListCategoriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListCategories401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListCategories401JSONResponse) VisitListCategoriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateCategoryRequestObject struct {
+	Body *CreateCategoryJSONRequestBody
+}
+
+type CreateCategoryResponseObject interface {
+	VisitCreateCategoryResponse(w http.ResponseWriter) error
+}
+
+type CreateCategory201JSONResponse CategoryEnvelope
+
+func (response CreateCategory201JSONResponse) VisitCreateCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateCategory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateCategory401JSONResponse) VisitCreateCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateCategory422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateCategory422JSONResponse) VisitCreateCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteCategoryRequestObject struct {
+	Id CategoryId `json:"id"`
+}
+
+type DeleteCategoryResponseObject interface {
+	VisitDeleteCategoryResponse(w http.ResponseWriter) error
+}
+
+type DeleteCategory204Response struct {
+}
+
+func (response DeleteCategory204Response) VisitDeleteCategoryResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteCategory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteCategory401JSONResponse) VisitDeleteCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteCategory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteCategory404JSONResponse) VisitDeleteCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetCategoryRequestObject struct {
+	Id CategoryId `json:"id"`
+}
+
+type GetCategoryResponseObject interface {
+	VisitGetCategoryResponse(w http.ResponseWriter) error
+}
+
+type GetCategory200JSONResponse CategoryEnvelope
+
+func (response GetCategory200JSONResponse) VisitGetCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetCategory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetCategory401JSONResponse) VisitGetCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetCategory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetCategory404JSONResponse) VisitGetCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateCategoryRequestObject struct {
+	Id   CategoryId `json:"id"`
+	Body *UpdateCategoryJSONRequestBody
+}
+
+type UpdateCategoryResponseObject interface {
+	VisitUpdateCategoryResponse(w http.ResponseWriter) error
+}
+
+type UpdateCategory200JSONResponse CategoryEnvelope
+
+func (response UpdateCategory200JSONResponse) VisitUpdateCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateCategory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateCategory401JSONResponse) VisitUpdateCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateCategory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateCategory404JSONResponse) VisitUpdateCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateCategory422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateCategory422JSONResponse) VisitUpdateCategoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListCephalometricAnalysesRequestObject struct {
+	Params ListCephalometricAnalysesParams
+}
+
+type ListCephalometricAnalysesResponseObject interface {
+	VisitListCephalometricAnalysesResponse(w http.ResponseWriter) error
+}
+
+type ListCephalometricAnalyses200JSONResponse PaginatedCephalometricAnalyses
+
+func (response ListCephalometricAnalyses200JSONResponse) VisitListCephalometricAnalysesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListCephalometricAnalyses401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListCephalometricAnalyses401JSONResponse) VisitListCephalometricAnalysesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateCephalometricAnalysisRequestObject struct {
+	Body *CreateCephalometricAnalysisJSONRequestBody
+}
+
+type CreateCephalometricAnalysisResponseObject interface {
+	VisitCreateCephalometricAnalysisResponse(w http.ResponseWriter) error
+}
+
+type CreateCephalometricAnalysis201JSONResponse CephalometricAnalysisEnvelope
+
+func (response CreateCephalometricAnalysis201JSONResponse) VisitCreateCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateCephalometricAnalysis401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateCephalometricAnalysis401JSONResponse) VisitCreateCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateCephalometricAnalysis422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateCephalometricAnalysis422JSONResponse) VisitCreateCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteCephalometricAnalysisRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type DeleteCephalometricAnalysisResponseObject interface {
+	VisitDeleteCephalometricAnalysisResponse(w http.ResponseWriter) error
+}
+
+type DeleteCephalometricAnalysis204Response struct {
+}
+
+func (response DeleteCephalometricAnalysis204Response) VisitDeleteCephalometricAnalysisResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteCephalometricAnalysis401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteCephalometricAnalysis401JSONResponse) VisitDeleteCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteCephalometricAnalysis404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteCephalometricAnalysis404JSONResponse) VisitDeleteCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetCephalometricAnalysisRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type GetCephalometricAnalysisResponseObject interface {
+	VisitGetCephalometricAnalysisResponse(w http.ResponseWriter) error
+}
+
+type GetCephalometricAnalysis200JSONResponse CephalometricAnalysisEnvelope
+
+func (response GetCephalometricAnalysis200JSONResponse) VisitGetCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetCephalometricAnalysis401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetCephalometricAnalysis401JSONResponse) VisitGetCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetCephalometricAnalysis404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetCephalometricAnalysis404JSONResponse) VisitGetCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateCephalometricAnalysisRequestObject struct {
+	Id   ClinicalRecordId `json:"id"`
+	Body *UpdateCephalometricAnalysisJSONRequestBody
+}
+
+type UpdateCephalometricAnalysisResponseObject interface {
+	VisitUpdateCephalometricAnalysisResponse(w http.ResponseWriter) error
+}
+
+type UpdateCephalometricAnalysis200JSONResponse CephalometricAnalysisEnvelope
+
+func (response UpdateCephalometricAnalysis200JSONResponse) VisitUpdateCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateCephalometricAnalysis401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateCephalometricAnalysis401JSONResponse) VisitUpdateCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateCephalometricAnalysis404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateCephalometricAnalysis404JSONResponse) VisitUpdateCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateCephalometricAnalysis422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateCephalometricAnalysis422JSONResponse) VisitUpdateCephalometricAnalysisResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListDiagnosticAssetsRequestObject struct {
+	Params ListDiagnosticAssetsParams
+}
+
+type ListDiagnosticAssetsResponseObject interface {
+	VisitListDiagnosticAssetsResponse(w http.ResponseWriter) error
+}
+
+type ListDiagnosticAssets200JSONResponse PaginatedDiagnosticAssets
+
+func (response ListDiagnosticAssets200JSONResponse) VisitListDiagnosticAssetsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListDiagnosticAssets401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListDiagnosticAssets401JSONResponse) VisitListDiagnosticAssetsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateDiagnosticAssetRequestObject struct {
+	Body *CreateDiagnosticAssetJSONRequestBody
+}
+
+type CreateDiagnosticAssetResponseObject interface {
+	VisitCreateDiagnosticAssetResponse(w http.ResponseWriter) error
+}
+
+type CreateDiagnosticAsset201JSONResponse DiagnosticAssetEnvelope
+
+func (response CreateDiagnosticAsset201JSONResponse) VisitCreateDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateDiagnosticAsset401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateDiagnosticAsset401JSONResponse) VisitCreateDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateDiagnosticAsset422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateDiagnosticAsset422JSONResponse) VisitCreateDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteDiagnosticAssetRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type DeleteDiagnosticAssetResponseObject interface {
+	VisitDeleteDiagnosticAssetResponse(w http.ResponseWriter) error
+}
+
+type DeleteDiagnosticAsset204Response struct {
+}
+
+func (response DeleteDiagnosticAsset204Response) VisitDeleteDiagnosticAssetResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteDiagnosticAsset401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteDiagnosticAsset401JSONResponse) VisitDeleteDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteDiagnosticAsset404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteDiagnosticAsset404JSONResponse) VisitDeleteDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDiagnosticAssetRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type GetDiagnosticAssetResponseObject interface {
+	VisitGetDiagnosticAssetResponse(w http.ResponseWriter) error
+}
+
+type GetDiagnosticAsset200JSONResponse DiagnosticAssetEnvelope
+
+func (response GetDiagnosticAsset200JSONResponse) VisitGetDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDiagnosticAsset401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetDiagnosticAsset401JSONResponse) VisitGetDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDiagnosticAsset404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetDiagnosticAsset404JSONResponse) VisitGetDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateDiagnosticAssetRequestObject struct {
+	Id   ClinicalRecordId `json:"id"`
+	Body *UpdateDiagnosticAssetJSONRequestBody
+}
+
+type UpdateDiagnosticAssetResponseObject interface {
+	VisitUpdateDiagnosticAssetResponse(w http.ResponseWriter) error
+}
+
+type UpdateDiagnosticAsset200JSONResponse DiagnosticAssetEnvelope
+
+func (response UpdateDiagnosticAsset200JSONResponse) VisitUpdateDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateDiagnosticAsset401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateDiagnosticAsset401JSONResponse) VisitUpdateDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateDiagnosticAsset404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateDiagnosticAsset404JSONResponse) VisitUpdateDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateDiagnosticAsset422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateDiagnosticAsset422JSONResponse) VisitUpdateDiagnosticAssetResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListInvoicesRequestObject struct {
+	Params ListInvoicesParams
+}
+
+type ListInvoicesResponseObject interface {
+	VisitListInvoicesResponse(w http.ResponseWriter) error
+}
+
+type ListInvoices200JSONResponse PaginatedInvoices
+
+func (response ListInvoices200JSONResponse) VisitListInvoicesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListInvoices400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response ListInvoices400JSONResponse) VisitListInvoicesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListInvoices401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListInvoices401JSONResponse) VisitListInvoicesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateInvoiceRequestObject struct {
+	Body *CreateInvoiceJSONRequestBody
+}
+
+type CreateInvoiceResponseObject interface {
+	VisitCreateInvoiceResponse(w http.ResponseWriter) error
+}
+
+type CreateInvoice201JSONResponse InvoiceEnvelope
+
+func (response CreateInvoice201JSONResponse) VisitCreateInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateInvoice400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response CreateInvoice400JSONResponse) VisitCreateInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateInvoice401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateInvoice401JSONResponse) VisitCreateInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateInvoice422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateInvoice422JSONResponse) VisitCreateInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteInvoiceRequestObject struct {
+	Id InvoiceId `json:"id"`
+}
+
+type DeleteInvoiceResponseObject interface {
+	VisitDeleteInvoiceResponse(w http.ResponseWriter) error
+}
+
+type DeleteInvoice204Response struct {
+}
+
+func (response DeleteInvoice204Response) VisitDeleteInvoiceResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteInvoice401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteInvoice401JSONResponse) VisitDeleteInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteInvoice404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteInvoice404JSONResponse) VisitDeleteInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetInvoiceRequestObject struct {
+	Id InvoiceId `json:"id"`
+}
+
+type GetInvoiceResponseObject interface {
+	VisitGetInvoiceResponse(w http.ResponseWriter) error
+}
+
+type GetInvoice200JSONResponse InvoiceEnvelope
+
+func (response GetInvoice200JSONResponse) VisitGetInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetInvoice401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetInvoice401JSONResponse) VisitGetInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetInvoice404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetInvoice404JSONResponse) VisitGetInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateInvoiceRequestObject struct {
+	Id   InvoiceId `json:"id"`
+	Body *UpdateInvoiceJSONRequestBody
+}
+
+type UpdateInvoiceResponseObject interface {
+	VisitUpdateInvoiceResponse(w http.ResponseWriter) error
+}
+
+type UpdateInvoice200JSONResponse InvoiceEnvelope
+
+func (response UpdateInvoice200JSONResponse) VisitUpdateInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateInvoice401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateInvoice401JSONResponse) VisitUpdateInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateInvoice404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateInvoice404JSONResponse) VisitUpdateInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateInvoice422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateInvoice422JSONResponse) VisitUpdateInvoiceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMechanotherapyVisitsRequestObject struct {
+	Params ListMechanotherapyVisitsParams
+}
+
+type ListMechanotherapyVisitsResponseObject interface {
+	VisitListMechanotherapyVisitsResponse(w http.ResponseWriter) error
+}
+
+type ListMechanotherapyVisits200JSONResponse PaginatedMechanotherapyVisits
+
+func (response ListMechanotherapyVisits200JSONResponse) VisitListMechanotherapyVisitsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMechanotherapyVisits401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListMechanotherapyVisits401JSONResponse) VisitListMechanotherapyVisitsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMechanotherapyVisitRequestObject struct {
+	Body *CreateMechanotherapyVisitJSONRequestBody
+}
+
+type CreateMechanotherapyVisitResponseObject interface {
+	VisitCreateMechanotherapyVisitResponse(w http.ResponseWriter) error
+}
+
+type CreateMechanotherapyVisit201JSONResponse MechanotherapyVisitEnvelope
+
+func (response CreateMechanotherapyVisit201JSONResponse) VisitCreateMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMechanotherapyVisit401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateMechanotherapyVisit401JSONResponse) VisitCreateMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMechanotherapyVisit422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateMechanotherapyVisit422JSONResponse) VisitCreateMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMechanotherapyVisitRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type DeleteMechanotherapyVisitResponseObject interface {
+	VisitDeleteMechanotherapyVisitResponse(w http.ResponseWriter) error
+}
+
+type DeleteMechanotherapyVisit204Response struct {
+}
+
+func (response DeleteMechanotherapyVisit204Response) VisitDeleteMechanotherapyVisitResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteMechanotherapyVisit401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteMechanotherapyVisit401JSONResponse) VisitDeleteMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMechanotherapyVisit404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteMechanotherapyVisit404JSONResponse) VisitDeleteMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMechanotherapyVisitRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type GetMechanotherapyVisitResponseObject interface {
+	VisitGetMechanotherapyVisitResponse(w http.ResponseWriter) error
+}
+
+type GetMechanotherapyVisit200JSONResponse MechanotherapyVisitEnvelope
+
+func (response GetMechanotherapyVisit200JSONResponse) VisitGetMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMechanotherapyVisit401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetMechanotherapyVisit401JSONResponse) VisitGetMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMechanotherapyVisit404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetMechanotherapyVisit404JSONResponse) VisitGetMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMechanotherapyVisitRequestObject struct {
+	Id   ClinicalRecordId `json:"id"`
+	Body *UpdateMechanotherapyVisitJSONRequestBody
+}
+
+type UpdateMechanotherapyVisitResponseObject interface {
+	VisitUpdateMechanotherapyVisitResponse(w http.ResponseWriter) error
+}
+
+type UpdateMechanotherapyVisit200JSONResponse MechanotherapyVisitEnvelope
+
+func (response UpdateMechanotherapyVisit200JSONResponse) VisitUpdateMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMechanotherapyVisit401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateMechanotherapyVisit401JSONResponse) VisitUpdateMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMechanotherapyVisit404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateMechanotherapyVisit404JSONResponse) VisitUpdateMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMechanotherapyVisit422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateMechanotherapyVisit422JSONResponse) VisitUpdateMechanotherapyVisitResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMedicalHistoryRequestObject struct {
+	Params ListMedicalHistoryParams
+}
+
+type ListMedicalHistoryResponseObject interface {
+	VisitListMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type ListMedicalHistory200JSONResponse PaginatedMedicalHistory
+
+func (response ListMedicalHistory200JSONResponse) VisitListMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListMedicalHistory401JSONResponse) VisitListMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMedicalHistoryRequestObject struct {
+	Body *CreateMedicalHistoryJSONRequestBody
+}
+
+type CreateMedicalHistoryResponseObject interface {
+	VisitCreateMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type CreateMedicalHistory201JSONResponse MedicalHistoryEnvelope
+
+func (response CreateMedicalHistory201JSONResponse) VisitCreateMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateMedicalHistory401JSONResponse) VisitCreateMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMedicalHistory422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateMedicalHistory422JSONResponse) VisitCreateMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMedicalHistoryRequestObject struct {
+	Id MedicalHistoryId `json:"id"`
+}
+
+type DeleteMedicalHistoryResponseObject interface {
+	VisitDeleteMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type DeleteMedicalHistory204Response struct {
+}
+
+func (response DeleteMedicalHistory204Response) VisitDeleteMedicalHistoryResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteMedicalHistory401JSONResponse) VisitDeleteMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMedicalHistory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteMedicalHistory404JSONResponse) VisitDeleteMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMedicalHistoryRequestObject struct {
+	Id MedicalHistoryId `json:"id"`
+}
+
+type GetMedicalHistoryResponseObject interface {
+	VisitGetMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type GetMedicalHistory200JSONResponse MedicalHistoryEnvelope
+
+func (response GetMedicalHistory200JSONResponse) VisitGetMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetMedicalHistory401JSONResponse) VisitGetMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMedicalHistory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetMedicalHistory404JSONResponse) VisitGetMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMedicalHistoryRequestObject struct {
+	Id   MedicalHistoryId `json:"id"`
+	Body *UpdateMedicalHistoryJSONRequestBody
+}
+
+type UpdateMedicalHistoryResponseObject interface {
+	VisitUpdateMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type UpdateMedicalHistory200JSONResponse MedicalHistoryEnvelope
+
+func (response UpdateMedicalHistory200JSONResponse) VisitUpdateMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateMedicalHistory401JSONResponse) VisitUpdateMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMedicalHistory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateMedicalHistory404JSONResponse) VisitUpdateMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMedicalHistory422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateMedicalHistory422JSONResponse) VisitUpdateMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOrthodonticsMedicalHistoriesRequestObject struct {
+	Params ListOrthodonticsMedicalHistoriesParams
+}
+
+type ListOrthodonticsMedicalHistoriesResponseObject interface {
+	VisitListOrthodonticsMedicalHistoriesResponse(w http.ResponseWriter) error
+}
+
+type ListOrthodonticsMedicalHistories200JSONResponse PaginatedOrthodonticsMedicalHistories
+
+func (response ListOrthodonticsMedicalHistories200JSONResponse) VisitListOrthodonticsMedicalHistoriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOrthodonticsMedicalHistories401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListOrthodonticsMedicalHistories401JSONResponse) VisitListOrthodonticsMedicalHistoriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateOrthodonticsMedicalHistoryRequestObject struct {
+	Body *CreateOrthodonticsMedicalHistoryJSONRequestBody
+}
+
+type CreateOrthodonticsMedicalHistoryResponseObject interface {
+	VisitCreateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type CreateOrthodonticsMedicalHistory201JSONResponse OrthodonticsMedicalHistoryEnvelope
+
+func (response CreateOrthodonticsMedicalHistory201JSONResponse) VisitCreateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateOrthodonticsMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateOrthodonticsMedicalHistory401JSONResponse) VisitCreateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateOrthodonticsMedicalHistory422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateOrthodonticsMedicalHistory422JSONResponse) VisitCreateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteOrthodonticsMedicalHistoryRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type DeleteOrthodonticsMedicalHistoryResponseObject interface {
+	VisitDeleteOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type DeleteOrthodonticsMedicalHistory204Response struct {
+}
+
+func (response DeleteOrthodonticsMedicalHistory204Response) VisitDeleteOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteOrthodonticsMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteOrthodonticsMedicalHistory401JSONResponse) VisitDeleteOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteOrthodonticsMedicalHistory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteOrthodonticsMedicalHistory404JSONResponse) VisitDeleteOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOrthodonticsMedicalHistoryRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type GetOrthodonticsMedicalHistoryResponseObject interface {
+	VisitGetOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type GetOrthodonticsMedicalHistory200JSONResponse OrthodonticsMedicalHistoryEnvelope
+
+func (response GetOrthodonticsMedicalHistory200JSONResponse) VisitGetOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOrthodonticsMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetOrthodonticsMedicalHistory401JSONResponse) VisitGetOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOrthodonticsMedicalHistory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetOrthodonticsMedicalHistory404JSONResponse) VisitGetOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateOrthodonticsMedicalHistoryRequestObject struct {
+	Id   ClinicalRecordId `json:"id"`
+	Body *UpdateOrthodonticsMedicalHistoryJSONRequestBody
+}
+
+type UpdateOrthodonticsMedicalHistoryResponseObject interface {
+	VisitUpdateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error
+}
+
+type UpdateOrthodonticsMedicalHistory200JSONResponse OrthodonticsMedicalHistoryEnvelope
+
+func (response UpdateOrthodonticsMedicalHistory200JSONResponse) VisitUpdateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateOrthodonticsMedicalHistory401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateOrthodonticsMedicalHistory401JSONResponse) VisitUpdateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateOrthodonticsMedicalHistory404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateOrthodonticsMedicalHistory404JSONResponse) VisitUpdateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateOrthodonticsMedicalHistory422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateOrthodonticsMedicalHistory422JSONResponse) VisitUpdateOrthodonticsMedicalHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListPatientsRequestObject struct {
 	Params ListPatientsParams
 }
@@ -1491,6 +6033,1036 @@ func (response UpdatePatient422JSONResponse) VisitUpdatePatientResponse(w http.R
 	return err
 }
 
+type GetPatientSummaryRequestObject struct {
+	Id PatientId `json:"id"`
+}
+
+type GetPatientSummaryResponseObject interface {
+	VisitGetPatientSummaryResponse(w http.ResponseWriter) error
+}
+
+type GetPatientSummary200JSONResponse PatientSummary
+
+func (response GetPatientSummary200JSONResponse) VisitGetPatientSummaryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPatientSummary401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetPatientSummary401JSONResponse) VisitGetPatientSummaryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPatientSummary404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetPatientSummary404JSONResponse) VisitGetPatientSummaryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListToothMeasurementsRequestObject struct {
+	Params ListToothMeasurementsParams
+}
+
+type ListToothMeasurementsResponseObject interface {
+	VisitListToothMeasurementsResponse(w http.ResponseWriter) error
+}
+
+type ListToothMeasurements200JSONResponse PaginatedToothMeasurements
+
+func (response ListToothMeasurements200JSONResponse) VisitListToothMeasurementsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListToothMeasurements401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListToothMeasurements401JSONResponse) VisitListToothMeasurementsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateToothMeasurementRequestObject struct {
+	Body *CreateToothMeasurementJSONRequestBody
+}
+
+type CreateToothMeasurementResponseObject interface {
+	VisitCreateToothMeasurementResponse(w http.ResponseWriter) error
+}
+
+type CreateToothMeasurement201JSONResponse ToothMeasurementEnvelope
+
+func (response CreateToothMeasurement201JSONResponse) VisitCreateToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateToothMeasurement401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateToothMeasurement401JSONResponse) VisitCreateToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateToothMeasurement422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateToothMeasurement422JSONResponse) VisitCreateToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteToothMeasurementRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type DeleteToothMeasurementResponseObject interface {
+	VisitDeleteToothMeasurementResponse(w http.ResponseWriter) error
+}
+
+type DeleteToothMeasurement204Response struct {
+}
+
+func (response DeleteToothMeasurement204Response) VisitDeleteToothMeasurementResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteToothMeasurement401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteToothMeasurement401JSONResponse) VisitDeleteToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteToothMeasurement404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteToothMeasurement404JSONResponse) VisitDeleteToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetToothMeasurementRequestObject struct {
+	Id ClinicalRecordId `json:"id"`
+}
+
+type GetToothMeasurementResponseObject interface {
+	VisitGetToothMeasurementResponse(w http.ResponseWriter) error
+}
+
+type GetToothMeasurement200JSONResponse ToothMeasurementEnvelope
+
+func (response GetToothMeasurement200JSONResponse) VisitGetToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetToothMeasurement401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetToothMeasurement401JSONResponse) VisitGetToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetToothMeasurement404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetToothMeasurement404JSONResponse) VisitGetToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateToothMeasurementRequestObject struct {
+	Id   ClinicalRecordId `json:"id"`
+	Body *UpdateToothMeasurementJSONRequestBody
+}
+
+type UpdateToothMeasurementResponseObject interface {
+	VisitUpdateToothMeasurementResponse(w http.ResponseWriter) error
+}
+
+type UpdateToothMeasurement200JSONResponse ToothMeasurementEnvelope
+
+func (response UpdateToothMeasurement200JSONResponse) VisitUpdateToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateToothMeasurement401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateToothMeasurement401JSONResponse) VisitUpdateToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateToothMeasurement404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateToothMeasurement404JSONResponse) VisitUpdateToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateToothMeasurement422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateToothMeasurement422JSONResponse) VisitUpdateToothMeasurementResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListTreatmentsRequestObject struct {
+	Params ListTreatmentsParams
+}
+
+type ListTreatmentsResponseObject interface {
+	VisitListTreatmentsResponse(w http.ResponseWriter) error
+}
+
+type ListTreatments200JSONResponse PaginatedTreatments
+
+func (response ListTreatments200JSONResponse) VisitListTreatmentsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListTreatments401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListTreatments401JSONResponse) VisitListTreatmentsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTreatmentRequestObject struct {
+	Body *CreateTreatmentJSONRequestBody
+}
+
+type CreateTreatmentResponseObject interface {
+	VisitCreateTreatmentResponse(w http.ResponseWriter) error
+}
+
+type CreateTreatment201JSONResponse TreatmentEnvelope
+
+func (response CreateTreatment201JSONResponse) VisitCreateTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTreatment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateTreatment401JSONResponse) VisitCreateTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateTreatment422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateTreatment422JSONResponse) VisitCreateTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteTreatmentRequestObject struct {
+	Id TreatmentId `json:"id"`
+}
+
+type DeleteTreatmentResponseObject interface {
+	VisitDeleteTreatmentResponse(w http.ResponseWriter) error
+}
+
+type DeleteTreatment204Response struct {
+}
+
+func (response DeleteTreatment204Response) VisitDeleteTreatmentResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteTreatment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteTreatment401JSONResponse) VisitDeleteTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteTreatment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteTreatment404JSONResponse) VisitDeleteTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTreatmentRequestObject struct {
+	Id TreatmentId `json:"id"`
+}
+
+type GetTreatmentResponseObject interface {
+	VisitGetTreatmentResponse(w http.ResponseWriter) error
+}
+
+type GetTreatment200JSONResponse TreatmentEnvelope
+
+func (response GetTreatment200JSONResponse) VisitGetTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTreatment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetTreatment401JSONResponse) VisitGetTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTreatment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetTreatment404JSONResponse) VisitGetTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTreatmentRequestObject struct {
+	Id   TreatmentId `json:"id"`
+	Body *UpdateTreatmentJSONRequestBody
+}
+
+type UpdateTreatmentResponseObject interface {
+	VisitUpdateTreatmentResponse(w http.ResponseWriter) error
+}
+
+type UpdateTreatment200JSONResponse TreatmentEnvelope
+
+func (response UpdateTreatment200JSONResponse) VisitUpdateTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTreatment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateTreatment401JSONResponse) VisitUpdateTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTreatment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateTreatment404JSONResponse) VisitUpdateTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateTreatment422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateTreatment422JSONResponse) VisitUpdateTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUsersRequestObject struct {
+	Params ListUsersParams
+}
+
+type ListUsersResponseObject interface {
+	VisitListUsersResponse(w http.ResponseWriter) error
+}
+
+type ListUsers200JSONResponse PaginatedUsers
+
+func (response ListUsers200JSONResponse) VisitListUsersResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUsers401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListUsers401JSONResponse) VisitListUsersResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateUserRequestObject struct {
+	Body *CreateUserJSONRequestBody
+}
+
+type CreateUserResponseObject interface {
+	VisitCreateUserResponse(w http.ResponseWriter) error
+}
+
+type CreateUser201JSONResponse UserEnvelope
+
+func (response CreateUser201JSONResponse) VisitCreateUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateUser401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateUser401JSONResponse) VisitCreateUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateUser422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateUser422JSONResponse) VisitCreateUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteUserRequestObject struct {
+	Id UserId `json:"id"`
+}
+
+type DeleteUserResponseObject interface {
+	VisitDeleteUserResponse(w http.ResponseWriter) error
+}
+
+type DeleteUser204Response struct {
+}
+
+func (response DeleteUser204Response) VisitDeleteUserResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteUser401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteUser401JSONResponse) VisitDeleteUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteUser404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteUser404JSONResponse) VisitDeleteUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetUserRequestObject struct {
+	Id UserId `json:"id"`
+}
+
+type GetUserResponseObject interface {
+	VisitGetUserResponse(w http.ResponseWriter) error
+}
+
+type GetUser200JSONResponse UserEnvelope
+
+func (response GetUser200JSONResponse) VisitGetUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetUser401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetUser401JSONResponse) VisitGetUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetUser404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetUser404JSONResponse) VisitGetUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateUserRequestObject struct {
+	Id   UserId `json:"id"`
+	Body *UpdateUserJSONRequestBody
+}
+
+type UpdateUserResponseObject interface {
+	VisitUpdateUserResponse(w http.ResponseWriter) error
+}
+
+type UpdateUser200JSONResponse UserEnvelope
+
+func (response UpdateUser200JSONResponse) VisitUpdateUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateUser401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateUser401JSONResponse) VisitUpdateUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateUser404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateUser404JSONResponse) VisitUpdateUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateUser422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateUser422JSONResponse) VisitUpdateUserResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListVisitTreatmentsRequestObject struct {
+	Params ListVisitTreatmentsParams
+}
+
+type ListVisitTreatmentsResponseObject interface {
+	VisitListVisitTreatmentsResponse(w http.ResponseWriter) error
+}
+
+type ListVisitTreatments200JSONResponse PaginatedVisitTreatments
+
+func (response ListVisitTreatments200JSONResponse) VisitListVisitTreatmentsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListVisitTreatments401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListVisitTreatments401JSONResponse) VisitListVisitTreatmentsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateVisitTreatmentRequestObject struct {
+	Body *CreateVisitTreatmentJSONRequestBody
+}
+
+type CreateVisitTreatmentResponseObject interface {
+	VisitCreateVisitTreatmentResponse(w http.ResponseWriter) error
+}
+
+type CreateVisitTreatment201JSONResponse VisitTreatmentEnvelope
+
+func (response CreateVisitTreatment201JSONResponse) VisitCreateVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateVisitTreatment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response CreateVisitTreatment401JSONResponse) VisitCreateVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateVisitTreatment422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateVisitTreatment422JSONResponse) VisitCreateVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteVisitTreatmentRequestObject struct {
+	Id VisitTreatmentId `json:"id"`
+}
+
+type DeleteVisitTreatmentResponseObject interface {
+	VisitDeleteVisitTreatmentResponse(w http.ResponseWriter) error
+}
+
+type DeleteVisitTreatment204Response struct {
+}
+
+func (response DeleteVisitTreatment204Response) VisitDeleteVisitTreatmentResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteVisitTreatment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteVisitTreatment401JSONResponse) VisitDeleteVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteVisitTreatment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteVisitTreatment404JSONResponse) VisitDeleteVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetVisitTreatmentRequestObject struct {
+	Id VisitTreatmentId `json:"id"`
+}
+
+type GetVisitTreatmentResponseObject interface {
+	VisitGetVisitTreatmentResponse(w http.ResponseWriter) error
+}
+
+type GetVisitTreatment200JSONResponse VisitTreatmentEnvelope
+
+func (response GetVisitTreatment200JSONResponse) VisitGetVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetVisitTreatment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetVisitTreatment401JSONResponse) VisitGetVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetVisitTreatment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetVisitTreatment404JSONResponse) VisitGetVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateVisitTreatmentRequestObject struct {
+	Id   VisitTreatmentId `json:"id"`
+	Body *UpdateVisitTreatmentJSONRequestBody
+}
+
+type UpdateVisitTreatmentResponseObject interface {
+	VisitUpdateVisitTreatmentResponse(w http.ResponseWriter) error
+}
+
+type UpdateVisitTreatment200JSONResponse VisitTreatmentEnvelope
+
+func (response UpdateVisitTreatment200JSONResponse) VisitUpdateVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateVisitTreatment401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateVisitTreatment401JSONResponse) VisitUpdateVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateVisitTreatment404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateVisitTreatment404JSONResponse) VisitUpdateVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateVisitTreatment422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateVisitTreatment422JSONResponse) VisitUpdateVisitTreatmentResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// List appointments with pagination, search, sort, and filters.
@@ -1511,6 +7083,111 @@ type StrictServerInterface interface {
 	// Authenticate and receive a JWT.
 	// (POST /auth/login)
 	LoginUser(ctx context.Context, request LoginUserRequestObject) (LoginUserResponseObject, error)
+	// List categories with pagination/search/sort.
+	// (GET /categories)
+	ListCategories(ctx context.Context, request ListCategoriesRequestObject) (ListCategoriesResponseObject, error)
+
+	// (POST /categories)
+	CreateCategory(ctx context.Context, request CreateCategoryRequestObject) (CreateCategoryResponseObject, error)
+
+	// (DELETE /categories/{id})
+	DeleteCategory(ctx context.Context, request DeleteCategoryRequestObject) (DeleteCategoryResponseObject, error)
+
+	// (GET /categories/{id})
+	GetCategory(ctx context.Context, request GetCategoryRequestObject) (GetCategoryResponseObject, error)
+
+	// (PUT /categories/{id})
+	UpdateCategory(ctx context.Context, request UpdateCategoryRequestObject) (UpdateCategoryResponseObject, error)
+
+	// (GET /cephalometric-analyses)
+	ListCephalometricAnalyses(ctx context.Context, request ListCephalometricAnalysesRequestObject) (ListCephalometricAnalysesResponseObject, error)
+
+	// (POST /cephalometric-analyses)
+	CreateCephalometricAnalysis(ctx context.Context, request CreateCephalometricAnalysisRequestObject) (CreateCephalometricAnalysisResponseObject, error)
+
+	// (DELETE /cephalometric-analyses/{id})
+	DeleteCephalometricAnalysis(ctx context.Context, request DeleteCephalometricAnalysisRequestObject) (DeleteCephalometricAnalysisResponseObject, error)
+
+	// (GET /cephalometric-analyses/{id})
+	GetCephalometricAnalysis(ctx context.Context, request GetCephalometricAnalysisRequestObject) (GetCephalometricAnalysisResponseObject, error)
+
+	// (PUT /cephalometric-analyses/{id})
+	UpdateCephalometricAnalysis(ctx context.Context, request UpdateCephalometricAnalysisRequestObject) (UpdateCephalometricAnalysisResponseObject, error)
+
+	// (GET /diagnostic-assets)
+	ListDiagnosticAssets(ctx context.Context, request ListDiagnosticAssetsRequestObject) (ListDiagnosticAssetsResponseObject, error)
+
+	// (POST /diagnostic-assets)
+	CreateDiagnosticAsset(ctx context.Context, request CreateDiagnosticAssetRequestObject) (CreateDiagnosticAssetResponseObject, error)
+
+	// (DELETE /diagnostic-assets/{id})
+	DeleteDiagnosticAsset(ctx context.Context, request DeleteDiagnosticAssetRequestObject) (DeleteDiagnosticAssetResponseObject, error)
+
+	// (GET /diagnostic-assets/{id})
+	GetDiagnosticAsset(ctx context.Context, request GetDiagnosticAssetRequestObject) (GetDiagnosticAssetResponseObject, error)
+
+	// (PUT /diagnostic-assets/{id})
+	UpdateDiagnosticAsset(ctx context.Context, request UpdateDiagnosticAssetRequestObject) (UpdateDiagnosticAssetResponseObject, error)
+	// List invoices with pagination, sort, and filters.
+	// (GET /invoices)
+	ListInvoices(ctx context.Context, request ListInvoicesRequestObject) (ListInvoicesResponseObject, error)
+	// Create a new invoice.
+	// (POST /invoices)
+	CreateInvoice(ctx context.Context, request CreateInvoiceRequestObject) (CreateInvoiceResponseObject, error)
+	// Soft-delete an invoice.
+	// (DELETE /invoices/{id})
+	DeleteInvoice(ctx context.Context, request DeleteInvoiceRequestObject) (DeleteInvoiceResponseObject, error)
+	// Fetch a single invoice by id.
+	// (GET /invoices/{id})
+	GetInvoice(ctx context.Context, request GetInvoiceRequestObject) (GetInvoiceResponseObject, error)
+	// Update an invoice (partial merge).
+	// (PUT /invoices/{id})
+	UpdateInvoice(ctx context.Context, request UpdateInvoiceRequestObject) (UpdateInvoiceResponseObject, error)
+
+	// (GET /mechanotherapy-visits)
+	ListMechanotherapyVisits(ctx context.Context, request ListMechanotherapyVisitsRequestObject) (ListMechanotherapyVisitsResponseObject, error)
+
+	// (POST /mechanotherapy-visits)
+	CreateMechanotherapyVisit(ctx context.Context, request CreateMechanotherapyVisitRequestObject) (CreateMechanotherapyVisitResponseObject, error)
+
+	// (DELETE /mechanotherapy-visits/{id})
+	DeleteMechanotherapyVisit(ctx context.Context, request DeleteMechanotherapyVisitRequestObject) (DeleteMechanotherapyVisitResponseObject, error)
+
+	// (GET /mechanotherapy-visits/{id})
+	GetMechanotherapyVisit(ctx context.Context, request GetMechanotherapyVisitRequestObject) (GetMechanotherapyVisitResponseObject, error)
+
+	// (PUT /mechanotherapy-visits/{id})
+	UpdateMechanotherapyVisit(ctx context.Context, request UpdateMechanotherapyVisitRequestObject) (UpdateMechanotherapyVisitResponseObject, error)
+
+	// (GET /medical-history)
+	ListMedicalHistory(ctx context.Context, request ListMedicalHistoryRequestObject) (ListMedicalHistoryResponseObject, error)
+
+	// (POST /medical-history)
+	CreateMedicalHistory(ctx context.Context, request CreateMedicalHistoryRequestObject) (CreateMedicalHistoryResponseObject, error)
+
+	// (DELETE /medical-history/{id})
+	DeleteMedicalHistory(ctx context.Context, request DeleteMedicalHistoryRequestObject) (DeleteMedicalHistoryResponseObject, error)
+
+	// (GET /medical-history/{id})
+	GetMedicalHistory(ctx context.Context, request GetMedicalHistoryRequestObject) (GetMedicalHistoryResponseObject, error)
+
+	// (PUT /medical-history/{id})
+	UpdateMedicalHistory(ctx context.Context, request UpdateMedicalHistoryRequestObject) (UpdateMedicalHistoryResponseObject, error)
+
+	// (GET /orthodontics-medical-histories)
+	ListOrthodonticsMedicalHistories(ctx context.Context, request ListOrthodonticsMedicalHistoriesRequestObject) (ListOrthodonticsMedicalHistoriesResponseObject, error)
+
+	// (POST /orthodontics-medical-histories)
+	CreateOrthodonticsMedicalHistory(ctx context.Context, request CreateOrthodonticsMedicalHistoryRequestObject) (CreateOrthodonticsMedicalHistoryResponseObject, error)
+
+	// (DELETE /orthodontics-medical-histories/{id})
+	DeleteOrthodonticsMedicalHistory(ctx context.Context, request DeleteOrthodonticsMedicalHistoryRequestObject) (DeleteOrthodonticsMedicalHistoryResponseObject, error)
+
+	// (GET /orthodontics-medical-histories/{id})
+	GetOrthodonticsMedicalHistory(ctx context.Context, request GetOrthodonticsMedicalHistoryRequestObject) (GetOrthodonticsMedicalHistoryResponseObject, error)
+
+	// (PUT /orthodontics-medical-histories/{id})
+	UpdateOrthodonticsMedicalHistory(ctx context.Context, request UpdateOrthodonticsMedicalHistoryRequestObject) (UpdateOrthodonticsMedicalHistoryResponseObject, error)
 	// List patients with pagination, search, and sort.
 	// (GET /patients)
 	ListPatients(ctx context.Context, request ListPatientsRequestObject) (ListPatientsResponseObject, error)
@@ -1526,6 +7203,69 @@ type StrictServerInterface interface {
 	// Update a patient (partial merge).
 	// (PUT /patients/{id})
 	UpdatePatient(ctx context.Context, request UpdatePatientRequestObject) (UpdatePatientResponseObject, error)
+	// Aggregate of every clinical sub-record for one patient.
+	// (GET /patients/{id}/summary)
+	GetPatientSummary(ctx context.Context, request GetPatientSummaryRequestObject) (GetPatientSummaryResponseObject, error)
+
+	// (GET /tooth-measurements)
+	ListToothMeasurements(ctx context.Context, request ListToothMeasurementsRequestObject) (ListToothMeasurementsResponseObject, error)
+
+	// (POST /tooth-measurements)
+	CreateToothMeasurement(ctx context.Context, request CreateToothMeasurementRequestObject) (CreateToothMeasurementResponseObject, error)
+
+	// (DELETE /tooth-measurements/{id})
+	DeleteToothMeasurement(ctx context.Context, request DeleteToothMeasurementRequestObject) (DeleteToothMeasurementResponseObject, error)
+
+	// (GET /tooth-measurements/{id})
+	GetToothMeasurement(ctx context.Context, request GetToothMeasurementRequestObject) (GetToothMeasurementResponseObject, error)
+
+	// (PUT /tooth-measurements/{id})
+	UpdateToothMeasurement(ctx context.Context, request UpdateToothMeasurementRequestObject) (UpdateToothMeasurementResponseObject, error)
+
+	// (GET /treatments)
+	ListTreatments(ctx context.Context, request ListTreatmentsRequestObject) (ListTreatmentsResponseObject, error)
+
+	// (POST /treatments)
+	CreateTreatment(ctx context.Context, request CreateTreatmentRequestObject) (CreateTreatmentResponseObject, error)
+
+	// (DELETE /treatments/{id})
+	DeleteTreatment(ctx context.Context, request DeleteTreatmentRequestObject) (DeleteTreatmentResponseObject, error)
+
+	// (GET /treatments/{id})
+	GetTreatment(ctx context.Context, request GetTreatmentRequestObject) (GetTreatmentResponseObject, error)
+
+	// (PUT /treatments/{id})
+	UpdateTreatment(ctx context.Context, request UpdateTreatmentRequestObject) (UpdateTreatmentResponseObject, error)
+
+	// (GET /users)
+	ListUsers(ctx context.Context, request ListUsersRequestObject) (ListUsersResponseObject, error)
+
+	// (POST /users)
+	CreateUser(ctx context.Context, request CreateUserRequestObject) (CreateUserResponseObject, error)
+
+	// (DELETE /users/{id})
+	DeleteUser(ctx context.Context, request DeleteUserRequestObject) (DeleteUserResponseObject, error)
+
+	// (GET /users/{id})
+	GetUser(ctx context.Context, request GetUserRequestObject) (GetUserResponseObject, error)
+
+	// (PUT /users/{id})
+	UpdateUser(ctx context.Context, request UpdateUserRequestObject) (UpdateUserResponseObject, error)
+
+	// (GET /visit-treatments)
+	ListVisitTreatments(ctx context.Context, request ListVisitTreatmentsRequestObject) (ListVisitTreatmentsResponseObject, error)
+
+	// (POST /visit-treatments)
+	CreateVisitTreatment(ctx context.Context, request CreateVisitTreatmentRequestObject) (CreateVisitTreatmentResponseObject, error)
+
+	// (DELETE /visit-treatments/{id})
+	DeleteVisitTreatment(ctx context.Context, request DeleteVisitTreatmentRequestObject) (DeleteVisitTreatmentResponseObject, error)
+
+	// (GET /visit-treatments/{id})
+	GetVisitTreatment(ctx context.Context, request GetVisitTreatmentRequestObject) (GetVisitTreatmentResponseObject, error)
+
+	// (PUT /visit-treatments/{id})
+	UpdateVisitTreatment(ctx context.Context, request UpdateVisitTreatmentRequestObject) (UpdateVisitTreatmentResponseObject, error)
 }
 
 type StrictHandlerFunc func(ctx *gin.Context, request any) (any, error)
@@ -1758,6 +7498,1000 @@ func (sh *strictHandler) LoginUser(ctx *gin.Context) {
 	}
 }
 
+// ListCategories operation middleware
+func (sh *strictHandler) ListCategories(ctx *gin.Context, params ListCategoriesParams) {
+	var request ListCategoriesRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListCategories(ctx, request.(ListCategoriesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListCategories")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListCategoriesResponseObject); ok {
+		if err := validResponse.VisitListCategoriesResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateCategory operation middleware
+func (sh *strictHandler) CreateCategory(ctx *gin.Context) {
+	var request CreateCategoryRequestObject
+
+	var body CreateCategoryJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateCategory(ctx, request.(CreateCategoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateCategory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateCategoryResponseObject); ok {
+		if err := validResponse.VisitCreateCategoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteCategory operation middleware
+func (sh *strictHandler) DeleteCategory(ctx *gin.Context, id CategoryId) {
+	var request DeleteCategoryRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteCategory(ctx, request.(DeleteCategoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteCategory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteCategoryResponseObject); ok {
+		if err := validResponse.VisitDeleteCategoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetCategory operation middleware
+func (sh *strictHandler) GetCategory(ctx *gin.Context, id CategoryId) {
+	var request GetCategoryRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetCategory(ctx, request.(GetCategoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetCategory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetCategoryResponseObject); ok {
+		if err := validResponse.VisitGetCategoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateCategory operation middleware
+func (sh *strictHandler) UpdateCategory(ctx *gin.Context, id CategoryId) {
+	var request UpdateCategoryRequestObject
+
+	request.Id = id
+
+	var body UpdateCategoryJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateCategory(ctx, request.(UpdateCategoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateCategory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateCategoryResponseObject); ok {
+		if err := validResponse.VisitUpdateCategoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListCephalometricAnalyses operation middleware
+func (sh *strictHandler) ListCephalometricAnalyses(ctx *gin.Context, params ListCephalometricAnalysesParams) {
+	var request ListCephalometricAnalysesRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListCephalometricAnalyses(ctx, request.(ListCephalometricAnalysesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListCephalometricAnalyses")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListCephalometricAnalysesResponseObject); ok {
+		if err := validResponse.VisitListCephalometricAnalysesResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateCephalometricAnalysis operation middleware
+func (sh *strictHandler) CreateCephalometricAnalysis(ctx *gin.Context) {
+	var request CreateCephalometricAnalysisRequestObject
+
+	var body CreateCephalometricAnalysisJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateCephalometricAnalysis(ctx, request.(CreateCephalometricAnalysisRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateCephalometricAnalysis")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateCephalometricAnalysisResponseObject); ok {
+		if err := validResponse.VisitCreateCephalometricAnalysisResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteCephalometricAnalysis operation middleware
+func (sh *strictHandler) DeleteCephalometricAnalysis(ctx *gin.Context, id ClinicalRecordId) {
+	var request DeleteCephalometricAnalysisRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteCephalometricAnalysis(ctx, request.(DeleteCephalometricAnalysisRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteCephalometricAnalysis")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteCephalometricAnalysisResponseObject); ok {
+		if err := validResponse.VisitDeleteCephalometricAnalysisResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetCephalometricAnalysis operation middleware
+func (sh *strictHandler) GetCephalometricAnalysis(ctx *gin.Context, id ClinicalRecordId) {
+	var request GetCephalometricAnalysisRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetCephalometricAnalysis(ctx, request.(GetCephalometricAnalysisRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetCephalometricAnalysis")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetCephalometricAnalysisResponseObject); ok {
+		if err := validResponse.VisitGetCephalometricAnalysisResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateCephalometricAnalysis operation middleware
+func (sh *strictHandler) UpdateCephalometricAnalysis(ctx *gin.Context, id ClinicalRecordId) {
+	var request UpdateCephalometricAnalysisRequestObject
+
+	request.Id = id
+
+	var body UpdateCephalometricAnalysisJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateCephalometricAnalysis(ctx, request.(UpdateCephalometricAnalysisRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateCephalometricAnalysis")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateCephalometricAnalysisResponseObject); ok {
+		if err := validResponse.VisitUpdateCephalometricAnalysisResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListDiagnosticAssets operation middleware
+func (sh *strictHandler) ListDiagnosticAssets(ctx *gin.Context, params ListDiagnosticAssetsParams) {
+	var request ListDiagnosticAssetsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListDiagnosticAssets(ctx, request.(ListDiagnosticAssetsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListDiagnosticAssets")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListDiagnosticAssetsResponseObject); ok {
+		if err := validResponse.VisitListDiagnosticAssetsResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateDiagnosticAsset operation middleware
+func (sh *strictHandler) CreateDiagnosticAsset(ctx *gin.Context) {
+	var request CreateDiagnosticAssetRequestObject
+
+	var body CreateDiagnosticAssetJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateDiagnosticAsset(ctx, request.(CreateDiagnosticAssetRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateDiagnosticAsset")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateDiagnosticAssetResponseObject); ok {
+		if err := validResponse.VisitCreateDiagnosticAssetResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteDiagnosticAsset operation middleware
+func (sh *strictHandler) DeleteDiagnosticAsset(ctx *gin.Context, id ClinicalRecordId) {
+	var request DeleteDiagnosticAssetRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteDiagnosticAsset(ctx, request.(DeleteDiagnosticAssetRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteDiagnosticAsset")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteDiagnosticAssetResponseObject); ok {
+		if err := validResponse.VisitDeleteDiagnosticAssetResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetDiagnosticAsset operation middleware
+func (sh *strictHandler) GetDiagnosticAsset(ctx *gin.Context, id ClinicalRecordId) {
+	var request GetDiagnosticAssetRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDiagnosticAsset(ctx, request.(GetDiagnosticAssetRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDiagnosticAsset")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetDiagnosticAssetResponseObject); ok {
+		if err := validResponse.VisitGetDiagnosticAssetResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateDiagnosticAsset operation middleware
+func (sh *strictHandler) UpdateDiagnosticAsset(ctx *gin.Context, id ClinicalRecordId) {
+	var request UpdateDiagnosticAssetRequestObject
+
+	request.Id = id
+
+	var body UpdateDiagnosticAssetJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateDiagnosticAsset(ctx, request.(UpdateDiagnosticAssetRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateDiagnosticAsset")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateDiagnosticAssetResponseObject); ok {
+		if err := validResponse.VisitUpdateDiagnosticAssetResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListInvoices operation middleware
+func (sh *strictHandler) ListInvoices(ctx *gin.Context, params ListInvoicesParams) {
+	var request ListInvoicesRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListInvoices(ctx, request.(ListInvoicesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListInvoices")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListInvoicesResponseObject); ok {
+		if err := validResponse.VisitListInvoicesResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateInvoice operation middleware
+func (sh *strictHandler) CreateInvoice(ctx *gin.Context) {
+	var request CreateInvoiceRequestObject
+
+	var body CreateInvoiceJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateInvoice(ctx, request.(CreateInvoiceRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateInvoice")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateInvoiceResponseObject); ok {
+		if err := validResponse.VisitCreateInvoiceResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteInvoice operation middleware
+func (sh *strictHandler) DeleteInvoice(ctx *gin.Context, id InvoiceId) {
+	var request DeleteInvoiceRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteInvoice(ctx, request.(DeleteInvoiceRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteInvoice")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteInvoiceResponseObject); ok {
+		if err := validResponse.VisitDeleteInvoiceResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetInvoice operation middleware
+func (sh *strictHandler) GetInvoice(ctx *gin.Context, id InvoiceId) {
+	var request GetInvoiceRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetInvoice(ctx, request.(GetInvoiceRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetInvoice")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetInvoiceResponseObject); ok {
+		if err := validResponse.VisitGetInvoiceResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateInvoice operation middleware
+func (sh *strictHandler) UpdateInvoice(ctx *gin.Context, id InvoiceId) {
+	var request UpdateInvoiceRequestObject
+
+	request.Id = id
+
+	var body UpdateInvoiceJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateInvoice(ctx, request.(UpdateInvoiceRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateInvoice")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateInvoiceResponseObject); ok {
+		if err := validResponse.VisitUpdateInvoiceResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListMechanotherapyVisits operation middleware
+func (sh *strictHandler) ListMechanotherapyVisits(ctx *gin.Context, params ListMechanotherapyVisitsParams) {
+	var request ListMechanotherapyVisitsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListMechanotherapyVisits(ctx, request.(ListMechanotherapyVisitsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListMechanotherapyVisits")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListMechanotherapyVisitsResponseObject); ok {
+		if err := validResponse.VisitListMechanotherapyVisitsResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateMechanotherapyVisit operation middleware
+func (sh *strictHandler) CreateMechanotherapyVisit(ctx *gin.Context) {
+	var request CreateMechanotherapyVisitRequestObject
+
+	var body CreateMechanotherapyVisitJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateMechanotherapyVisit(ctx, request.(CreateMechanotherapyVisitRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateMechanotherapyVisit")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateMechanotherapyVisitResponseObject); ok {
+		if err := validResponse.VisitCreateMechanotherapyVisitResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteMechanotherapyVisit operation middleware
+func (sh *strictHandler) DeleteMechanotherapyVisit(ctx *gin.Context, id ClinicalRecordId) {
+	var request DeleteMechanotherapyVisitRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteMechanotherapyVisit(ctx, request.(DeleteMechanotherapyVisitRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteMechanotherapyVisit")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteMechanotherapyVisitResponseObject); ok {
+		if err := validResponse.VisitDeleteMechanotherapyVisitResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMechanotherapyVisit operation middleware
+func (sh *strictHandler) GetMechanotherapyVisit(ctx *gin.Context, id ClinicalRecordId) {
+	var request GetMechanotherapyVisitRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMechanotherapyVisit(ctx, request.(GetMechanotherapyVisitRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMechanotherapyVisit")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetMechanotherapyVisitResponseObject); ok {
+		if err := validResponse.VisitGetMechanotherapyVisitResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateMechanotherapyVisit operation middleware
+func (sh *strictHandler) UpdateMechanotherapyVisit(ctx *gin.Context, id ClinicalRecordId) {
+	var request UpdateMechanotherapyVisitRequestObject
+
+	request.Id = id
+
+	var body UpdateMechanotherapyVisitJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateMechanotherapyVisit(ctx, request.(UpdateMechanotherapyVisitRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateMechanotherapyVisit")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateMechanotherapyVisitResponseObject); ok {
+		if err := validResponse.VisitUpdateMechanotherapyVisitResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListMedicalHistory operation middleware
+func (sh *strictHandler) ListMedicalHistory(ctx *gin.Context, params ListMedicalHistoryParams) {
+	var request ListMedicalHistoryRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListMedicalHistory(ctx, request.(ListMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitListMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateMedicalHistory operation middleware
+func (sh *strictHandler) CreateMedicalHistory(ctx *gin.Context) {
+	var request CreateMedicalHistoryRequestObject
+
+	var body CreateMedicalHistoryJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateMedicalHistory(ctx, request.(CreateMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitCreateMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteMedicalHistory operation middleware
+func (sh *strictHandler) DeleteMedicalHistory(ctx *gin.Context, id MedicalHistoryId) {
+	var request DeleteMedicalHistoryRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteMedicalHistory(ctx, request.(DeleteMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitDeleteMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMedicalHistory operation middleware
+func (sh *strictHandler) GetMedicalHistory(ctx *gin.Context, id MedicalHistoryId) {
+	var request GetMedicalHistoryRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMedicalHistory(ctx, request.(GetMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitGetMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateMedicalHistory operation middleware
+func (sh *strictHandler) UpdateMedicalHistory(ctx *gin.Context, id MedicalHistoryId) {
+	var request UpdateMedicalHistoryRequestObject
+
+	request.Id = id
+
+	var body UpdateMedicalHistoryJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateMedicalHistory(ctx, request.(UpdateMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitUpdateMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListOrthodonticsMedicalHistories operation middleware
+func (sh *strictHandler) ListOrthodonticsMedicalHistories(ctx *gin.Context, params ListOrthodonticsMedicalHistoriesParams) {
+	var request ListOrthodonticsMedicalHistoriesRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListOrthodonticsMedicalHistories(ctx, request.(ListOrthodonticsMedicalHistoriesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListOrthodonticsMedicalHistories")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListOrthodonticsMedicalHistoriesResponseObject); ok {
+		if err := validResponse.VisitListOrthodonticsMedicalHistoriesResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateOrthodonticsMedicalHistory operation middleware
+func (sh *strictHandler) CreateOrthodonticsMedicalHistory(ctx *gin.Context) {
+	var request CreateOrthodonticsMedicalHistoryRequestObject
+
+	var body CreateOrthodonticsMedicalHistoryJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateOrthodonticsMedicalHistory(ctx, request.(CreateOrthodonticsMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateOrthodonticsMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateOrthodonticsMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitCreateOrthodonticsMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteOrthodonticsMedicalHistory operation middleware
+func (sh *strictHandler) DeleteOrthodonticsMedicalHistory(ctx *gin.Context, id ClinicalRecordId) {
+	var request DeleteOrthodonticsMedicalHistoryRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteOrthodonticsMedicalHistory(ctx, request.(DeleteOrthodonticsMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteOrthodonticsMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteOrthodonticsMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitDeleteOrthodonticsMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetOrthodonticsMedicalHistory operation middleware
+func (sh *strictHandler) GetOrthodonticsMedicalHistory(ctx *gin.Context, id ClinicalRecordId) {
+	var request GetOrthodonticsMedicalHistoryRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetOrthodonticsMedicalHistory(ctx, request.(GetOrthodonticsMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetOrthodonticsMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetOrthodonticsMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitGetOrthodonticsMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateOrthodonticsMedicalHistory operation middleware
+func (sh *strictHandler) UpdateOrthodonticsMedicalHistory(ctx *gin.Context, id ClinicalRecordId) {
+	var request UpdateOrthodonticsMedicalHistoryRequestObject
+
+	request.Id = id
+
+	var body UpdateOrthodonticsMedicalHistoryJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateOrthodonticsMedicalHistory(ctx, request.(UpdateOrthodonticsMedicalHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateOrthodonticsMedicalHistory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateOrthodonticsMedicalHistoryResponseObject); ok {
+		if err := validResponse.VisitUpdateOrthodonticsMedicalHistoryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // ListPatients operation middleware
 func (sh *strictHandler) ListPatients(ctx *gin.Context, params ListPatientsParams) {
 	var request ListPatientsRequestObject
@@ -1900,69 +8634,723 @@ func (sh *strictHandler) UpdatePatient(ctx *gin.Context, id PatientId) {
 	}
 }
 
+// GetPatientSummary operation middleware
+func (sh *strictHandler) GetPatientSummary(ctx *gin.Context, id PatientId) {
+	var request GetPatientSummaryRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetPatientSummary(ctx, request.(GetPatientSummaryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetPatientSummary")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetPatientSummaryResponseObject); ok {
+		if err := validResponse.VisitGetPatientSummaryResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListToothMeasurements operation middleware
+func (sh *strictHandler) ListToothMeasurements(ctx *gin.Context, params ListToothMeasurementsParams) {
+	var request ListToothMeasurementsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListToothMeasurements(ctx, request.(ListToothMeasurementsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListToothMeasurements")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListToothMeasurementsResponseObject); ok {
+		if err := validResponse.VisitListToothMeasurementsResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateToothMeasurement operation middleware
+func (sh *strictHandler) CreateToothMeasurement(ctx *gin.Context) {
+	var request CreateToothMeasurementRequestObject
+
+	var body CreateToothMeasurementJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateToothMeasurement(ctx, request.(CreateToothMeasurementRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateToothMeasurement")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateToothMeasurementResponseObject); ok {
+		if err := validResponse.VisitCreateToothMeasurementResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteToothMeasurement operation middleware
+func (sh *strictHandler) DeleteToothMeasurement(ctx *gin.Context, id ClinicalRecordId) {
+	var request DeleteToothMeasurementRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteToothMeasurement(ctx, request.(DeleteToothMeasurementRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteToothMeasurement")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteToothMeasurementResponseObject); ok {
+		if err := validResponse.VisitDeleteToothMeasurementResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetToothMeasurement operation middleware
+func (sh *strictHandler) GetToothMeasurement(ctx *gin.Context, id ClinicalRecordId) {
+	var request GetToothMeasurementRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetToothMeasurement(ctx, request.(GetToothMeasurementRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetToothMeasurement")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetToothMeasurementResponseObject); ok {
+		if err := validResponse.VisitGetToothMeasurementResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateToothMeasurement operation middleware
+func (sh *strictHandler) UpdateToothMeasurement(ctx *gin.Context, id ClinicalRecordId) {
+	var request UpdateToothMeasurementRequestObject
+
+	request.Id = id
+
+	var body UpdateToothMeasurementJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateToothMeasurement(ctx, request.(UpdateToothMeasurementRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateToothMeasurement")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateToothMeasurementResponseObject); ok {
+		if err := validResponse.VisitUpdateToothMeasurementResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListTreatments operation middleware
+func (sh *strictHandler) ListTreatments(ctx *gin.Context, params ListTreatmentsParams) {
+	var request ListTreatmentsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListTreatments(ctx, request.(ListTreatmentsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListTreatments")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListTreatmentsResponseObject); ok {
+		if err := validResponse.VisitListTreatmentsResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateTreatment operation middleware
+func (sh *strictHandler) CreateTreatment(ctx *gin.Context) {
+	var request CreateTreatmentRequestObject
+
+	var body CreateTreatmentJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateTreatment(ctx, request.(CreateTreatmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateTreatment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateTreatmentResponseObject); ok {
+		if err := validResponse.VisitCreateTreatmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteTreatment operation middleware
+func (sh *strictHandler) DeleteTreatment(ctx *gin.Context, id TreatmentId) {
+	var request DeleteTreatmentRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteTreatment(ctx, request.(DeleteTreatmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteTreatment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteTreatmentResponseObject); ok {
+		if err := validResponse.VisitDeleteTreatmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetTreatment operation middleware
+func (sh *strictHandler) GetTreatment(ctx *gin.Context, id TreatmentId) {
+	var request GetTreatmentRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetTreatment(ctx, request.(GetTreatmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetTreatment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetTreatmentResponseObject); ok {
+		if err := validResponse.VisitGetTreatmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateTreatment operation middleware
+func (sh *strictHandler) UpdateTreatment(ctx *gin.Context, id TreatmentId) {
+	var request UpdateTreatmentRequestObject
+
+	request.Id = id
+
+	var body UpdateTreatmentJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateTreatment(ctx, request.(UpdateTreatmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateTreatment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateTreatmentResponseObject); ok {
+		if err := validResponse.VisitUpdateTreatmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListUsers operation middleware
+func (sh *strictHandler) ListUsers(ctx *gin.Context, params ListUsersParams) {
+	var request ListUsersRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListUsers(ctx, request.(ListUsersRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListUsers")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListUsersResponseObject); ok {
+		if err := validResponse.VisitListUsersResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateUser operation middleware
+func (sh *strictHandler) CreateUser(ctx *gin.Context) {
+	var request CreateUserRequestObject
+
+	var body CreateUserJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateUser(ctx, request.(CreateUserRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateUser")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateUserResponseObject); ok {
+		if err := validResponse.VisitCreateUserResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteUser operation middleware
+func (sh *strictHandler) DeleteUser(ctx *gin.Context, id UserId) {
+	var request DeleteUserRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteUser(ctx, request.(DeleteUserRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteUser")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteUserResponseObject); ok {
+		if err := validResponse.VisitDeleteUserResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetUser operation middleware
+func (sh *strictHandler) GetUser(ctx *gin.Context, id UserId) {
+	var request GetUserRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetUser(ctx, request.(GetUserRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetUser")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetUserResponseObject); ok {
+		if err := validResponse.VisitGetUserResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateUser operation middleware
+func (sh *strictHandler) UpdateUser(ctx *gin.Context, id UserId) {
+	var request UpdateUserRequestObject
+
+	request.Id = id
+
+	var body UpdateUserJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateUser(ctx, request.(UpdateUserRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateUser")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateUserResponseObject); ok {
+		if err := validResponse.VisitUpdateUserResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListVisitTreatments operation middleware
+func (sh *strictHandler) ListVisitTreatments(ctx *gin.Context, params ListVisitTreatmentsParams) {
+	var request ListVisitTreatmentsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListVisitTreatments(ctx, request.(ListVisitTreatmentsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListVisitTreatments")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(ListVisitTreatmentsResponseObject); ok {
+		if err := validResponse.VisitListVisitTreatmentsResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateVisitTreatment operation middleware
+func (sh *strictHandler) CreateVisitTreatment(ctx *gin.Context) {
+	var request CreateVisitTreatmentRequestObject
+
+	var body CreateVisitTreatmentJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateVisitTreatment(ctx, request.(CreateVisitTreatmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateVisitTreatment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(CreateVisitTreatmentResponseObject); ok {
+		if err := validResponse.VisitCreateVisitTreatmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteVisitTreatment operation middleware
+func (sh *strictHandler) DeleteVisitTreatment(ctx *gin.Context, id VisitTreatmentId) {
+	var request DeleteVisitTreatmentRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteVisitTreatment(ctx, request.(DeleteVisitTreatmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteVisitTreatment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(DeleteVisitTreatmentResponseObject); ok {
+		if err := validResponse.VisitDeleteVisitTreatmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetVisitTreatment operation middleware
+func (sh *strictHandler) GetVisitTreatment(ctx *gin.Context, id VisitTreatmentId) {
+	var request GetVisitTreatmentRequestObject
+
+	request.Id = id
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetVisitTreatment(ctx, request.(GetVisitTreatmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetVisitTreatment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(GetVisitTreatmentResponseObject); ok {
+		if err := validResponse.VisitGetVisitTreatmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateVisitTreatment operation middleware
+func (sh *strictHandler) UpdateVisitTreatment(ctx *gin.Context, id VisitTreatmentId) {
+	var request UpdateVisitTreatmentRequestObject
+
+	request.Id = id
+
+	var body UpdateVisitTreatmentJSONRequestBody
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(ctx, err)
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateVisitTreatment(ctx, request.(UpdateVisitTreatmentRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateVisitTreatment")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		sh.options.HandlerErrorFunc(ctx, err)
+	} else if validResponse, ok := response.(UpdateVisitTreatmentResponseObject); ok {
+		if err := validResponse.VisitUpdateVisitTreatmentResponse(ctx.Writer); err != nil {
+			sh.options.ResponseErrorHandlerFunc(ctx, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(ctx, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // Base64 encoded, compressed with deflate, json marshaled OpenAPI spec.
 // Stored as a slice of fixed-width chunks rather than one concatenated
 // const string: with thousands of chunks the chained `+` fold is several
 // times slower for the Go compiler than parsing a slice literal.
 var swaggerSpec = []string{
-	"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",
+	"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",
+	"RlWNTWDUuc227Ozt/t39/wYAAP//",
 }
 
 // decodeSpec returns the embedded OpenAPI spec as raw JSON bytes,
