@@ -43,18 +43,21 @@ type DBConfig struct {
 	Username   string
 	Password   string
 
-	// SSLMode mirrors Postgres' libpq terminology because that's the
-	// vocabulary developers know. Supported values: "" (off, default),
-	// "verify-ca" (chain verified, hostname NOT checked), "verify-full"
-	// (chain + hostname). The MySQL driver's native modes ("true",
-	// "skip-verify", "preferred") are intentionally not exposed — they
-	// don't map cleanly onto operator intent.
+	// SSLMode controls how MySQL TLS is wired:
+	//   ""            no TLS (default).
+	//   "true"        TLS using the OS trust store; hostname IS checked.
+	//                 No DB_SSLROOTCERT needed. Good fit for managed DBs
+	//                 with publicly-signed certs (RDS, PlanetScale, etc).
+	//   "verify-ca"   chain verified against a custom CA from
+	//                 DB_SSLROOTCERT; hostname NOT checked. Matches
+	//                 libpq's vocabulary.
+	//   "verify-full" custom CA + hostname check.
 	SSLMode string
 	// SSLRootCert is either a filesystem path to a PEM file OR the raw
 	// PEM-encoded CA bundle itself (anything starting with `-----BEGIN`).
 	// Inline form is intended for serverless platforms that can't ship a
 	// sidecar file but can inject multi-line env vars. Required when
-	// SSLMode != "".
+	// SSLMode is "verify-ca" or "verify-full"; ignored otherwise.
 	SSLRootCert string
 }
 
@@ -87,7 +90,15 @@ func (c DBConfig) DSN() string {
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=2s",
 		c.Username, c.Password, c.Host, c.Port, c.Database,
 	)
-	if c.SSLMode != "" {
+	switch c.SSLMode {
+	case "":
+		// plain TCP
+	case "true":
+		// Driver's built-in TLS: system trust store + hostname check.
+		dsn += "&tls=true"
+	default:
+		// "verify-ca" / "verify-full" — points at the *tls.Config that
+		// RegisterTLS() must have installed for this name.
 		dsn += "&tls=" + tlsConfigName
 	}
 	return dsn
@@ -98,7 +109,10 @@ func (c DBConfig) DSN() string {
 // embedded in DSN(). Must be called before gorm.Open() when SSLMode is
 // set. No-op when SSLMode is empty.
 func (c DBConfig) RegisterTLS() error {
-	if c.SSLMode == "" {
+	// "" → no TLS at all. "true" → driver handles TLS using OS roots
+	// and needs no app-side registration. Only verify-ca / verify-full
+	// build a custom config from DB_SSLROOTCERT.
+	if c.SSLMode == "" || c.SSLMode == "true" {
 		return nil
 	}
 	caPEM, source, err := loadCABundle(c.SSLRootCert)
@@ -227,12 +241,14 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("config: JWT_SECRET is required")
 	}
 	switch cfg.DB.SSLMode {
-	case "", "verify-ca", "verify-full":
+	case "", "true", "verify-ca", "verify-full":
 		// OK.
 	default:
-		return nil, fmt.Errorf("config: DB_SSLMODE must be one of '', 'verify-ca', 'verify-full' (got %q)", cfg.DB.SSLMode)
+		return nil, fmt.Errorf("config: DB_SSLMODE must be one of '', 'true', 'verify-ca', 'verify-full' (got %q)", cfg.DB.SSLMode)
 	}
-	if cfg.DB.SSLMode != "" && cfg.DB.SSLRootCert == "" {
+	// DB_SSLROOTCERT is only meaningful for the custom-CA modes; "true"
+	// uses the OS trust store so the cert env var is irrelevant.
+	if (cfg.DB.SSLMode == "verify-ca" || cfg.DB.SSLMode == "verify-full") && cfg.DB.SSLRootCert == "" {
 		return nil, fmt.Errorf("config: DB_SSLROOTCERT is required when DB_SSLMODE=%s", cfg.DB.SSLMode)
 	}
 
