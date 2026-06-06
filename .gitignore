@@ -1,10 +1,12 @@
 # --- Go build artifacts ---
-# Compiled binaries (project name + any one-off main packages)
+# Compiled binaries (project name + any one-off main packages).
+# NOTE: do NOT add "/api" here — that ignores the api/ SOURCE directory
+# (api/index.go is the Vercel function entrypoint, api/openapi.yaml is the
+# spec). We build binaries into bin/ (ignored below), so there is no root
+# "api" binary to exclude.
 /clinics
-/api
 /server
 /cmd/*/clinics
-/cmd/*/api
 
 # Standard Go output / object files
 *.exe

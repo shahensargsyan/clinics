@@ -1,0 +1,2118 @@
+openapi: 3.0.3
+
+info:
+  title: Clinics API
+  version: 0.1.0
+  description: |
+    Go (Gin + GORM) backend replacing the Laravel/Backpack admin for the
+    clinics project. This document is the single source of truth for the
+    HTTP contract; `oapi-codegen` consumes it to produce the server
+    interface implemented in `internal/api/`.
+
+    ## Conventions
+    - **Pagination.** Use `page` (1-indexed) and `per_page`. Responses
+      always include a `meta` object: `current_page`, `per_page`, `total`,
+      `last_page`.
+    - **Search.** A single `search` query parameter performs a
+      case-insensitive substring match across each resource's documented
+      searchable columns (see the endpoint description).
+    - **Sort.** `sort=column` for ascending, `sort=-column` for descending.
+    - **Update semantics.** `PUT` accepts a **partial** body — only the
+      keys present are updated. This intentionally mirrors the existing
+      Backpack admin behaviour rather than strict REST replace semantics.
+    - **Errors.** 422 responses follow Laravel's shape
+      (`{ message, errors: { field: [msg, ...] } }`) so the existing
+      frontend's validation-display code keeps working.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development.
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Auth
+    description: Authentication and session issuance.
+  - name: Patients
+    description: Patient demographic records.
+  - name: Appointments
+    description: Scheduling, status transitions, and per-visit metadata.
+  - name: Invoices
+    description: Per-appointment billing records.
+  - name: Categories
+    description: Tree of treatment categories.
+  - name: Treatments
+    description: Catalog of services with standard costs.
+  - name: VisitTreatments
+    description: Per-tooth treatment records linking an appointment to a treatment.
+  - name: Users
+    description: Admin/clinician accounts.
+  - name: MedicalHistory
+    description: General patient medical history entries.
+  - name: Clinical
+    description: Orthodontic clinical record sub-types (diagnostic, biometric, visit).
+
+paths:
+
+  /auth/login:
+    post:
+      operationId: loginUser
+      tags: [Auth]
+      summary: Authenticate and receive a JWT.
+      description: |
+        Mirrors Laravel's `Auth::guard('api')->attempt([username, password])`
+        flow: the `username` field is the user's email address (named so for
+        wire compatibility with the existing frontend's login form).
+      security: []   # Public endpoint — bearer token is what this issues.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /patients:
+    get:
+      operationId: listPatients
+      tags: [Patients]
+      summary: List patients with pagination, search, and sort.
+      description: |
+        `search` matches against `first_name`, `last_name`, `email`, and
+        `phone` (case-insensitive LIKE).
+
+        Sortable columns: `id`, `first_name`, `last_name`, `date_of_birth`,
+        `email`, `created_at`, `updated_at`.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Paginated patient list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPatients'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+    post:
+      operationId: createPatient
+      tags: [Patients]
+      summary: Create a new patient.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientCreate'
+      responses:
+        '201':
+          description: Patient created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientEnvelope'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /patients/{id}:
+    parameters:
+      - $ref: '#/components/parameters/PatientId'
+
+    get:
+      operationId: getPatient
+      tags: [Patients]
+      summary: Fetch a single patient by id.
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientEnvelope'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+    put:
+      operationId: updatePatient
+      tags: [Patients]
+      summary: Update a patient (partial merge).
+      description: |
+        Only fields present in the request body are updated. Omit a key to
+        leave its value unchanged. Explicit `null` clears the field (where
+        the column is nullable).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientUpdate'
+      responses:
+        '200':
+          description: Patient updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientEnvelope'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+    delete:
+      operationId: deletePatient
+      tags: [Patients]
+      summary: Soft-delete a patient.
+      description: |
+        Sets `deleted_at`; the row is preserved and excluded from default
+        queries via GORM's soft-delete handling.
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /appointments:
+    get:
+      operationId: listAppointments
+      tags: [Appointments]
+      summary: List appointments with pagination, search, sort, and filters.
+      description: |
+        `search` matches against `reason_for_visit` (case-insensitive LIKE).
+
+        Sortable columns: `id`, `appointment_date_time`, `duration_minutes`,
+        `status`, `created_at`, `updated_at`.
+
+        All filter params (`status`, `patient_id`, `user_id`) are
+        combinable (AND).
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Scheduled, Confirmed, Completed, Cancelled]
+        - name: patient_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Paginated appointment list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAppointments'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+    post:
+      operationId: createAppointment
+      tags: [Appointments]
+      summary: Create a new appointment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentCreate'
+      responses:
+        '201':
+          description: Appointment created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentEnvelope'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /appointments/{id}:
+    parameters:
+      - $ref: '#/components/parameters/AppointmentId'
+
+    get:
+      operationId: getAppointment
+      tags: [Appointments]
+      summary: Fetch a single appointment by id.
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentEnvelope'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+    put:
+      operationId: updateAppointment
+      tags: [Appointments]
+      summary: Update an appointment (partial merge).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentUpdate'
+      responses:
+        '200':
+          description: Appointment updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentEnvelope'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+    delete:
+      operationId: deleteAppointment
+      tags: [Appointments]
+      summary: Soft-delete an appointment.
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /invoices:
+    get:
+      operationId: listInvoices
+      tags: [Invoices]
+      summary: List invoices with pagination, sort, and filters.
+      description: |
+        Sortable columns: `id`, `invoice_date`, `total_amount`,
+        `amount_paid`, `payment_status`, `created_at`, `updated_at`.
+
+        Filters (combinable, AND): `payment_status`, `appointment_id`.
+
+        The `search` parameter is accepted for API uniformity but is a
+        no-op for invoices — there are no free-text columns worth
+        searching.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - name: payment_status
+          in: query
+          schema:
+            type: string
+            enum: [Pending, Paid, Partial]
+        - name: appointment_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Paginated invoice list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInvoices'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+    post:
+      operationId: createInvoice
+      tags: [Invoices]
+      summary: Create a new invoice.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceCreate'
+      responses:
+        '201':
+          description: Invoice created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceEnvelope'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /invoices/{id}:
+    parameters:
+      - $ref: '#/components/parameters/InvoiceId'
+
+    get:
+      operationId: getInvoice
+      tags: [Invoices]
+      summary: Fetch a single invoice by id.
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceEnvelope'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+    put:
+      operationId: updateInvoice
+      tags: [Invoices]
+      summary: Update an invoice (partial merge).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceUpdate'
+      responses:
+        '200':
+          description: Invoice updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceEnvelope'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+    delete:
+      operationId: deleteInvoice
+      tags: [Invoices]
+      summary: Soft-delete an invoice.
+      responses:
+        '204':
+          description: Deleted.
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [Categories]
+      summary: List categories with pagination/search/sort.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - name: parent_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 0 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedCategories' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createCategory
+      tags: [Categories]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/CategoryCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/CategoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /categories/{id}:
+    parameters: [ { $ref: '#/components/parameters/CategoryId' } ]
+    get:
+      operationId: getCategory
+      tags: [Categories]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/CategoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateCategory
+      tags: [Categories]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/CategoryUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/CategoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteCategory
+      tags: [Categories]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /treatments:
+    get:
+      operationId: listTreatments
+      tags: [Treatments]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - name: category_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedTreatments' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createTreatment
+      tags: [Treatments]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/TreatmentCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/TreatmentEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /treatments/{id}:
+    parameters: [ { $ref: '#/components/parameters/TreatmentId' } ]
+    get:
+      operationId: getTreatment
+      tags: [Treatments]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/TreatmentEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateTreatment
+      tags: [Treatments]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/TreatmentUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/TreatmentEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteTreatment
+      tags: [Treatments]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /visit-treatments:
+    get:
+      operationId: listVisitTreatments
+      tags: [VisitTreatments]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - name: appointment_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+        - name: treatment_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedVisitTreatments' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createVisitTreatment
+      tags: [VisitTreatments]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/VisitTreatmentCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/VisitTreatmentEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /visit-treatments/{id}:
+    parameters: [ { $ref: '#/components/parameters/VisitTreatmentId' } ]
+    get:
+      operationId: getVisitTreatment
+      tags: [VisitTreatments]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/VisitTreatmentEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateVisitTreatment
+      tags: [VisitTreatments]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/VisitTreatmentUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/VisitTreatmentEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteVisitTreatment
+      tags: [VisitTreatments]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedUsers' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createUser
+      tags: [Users]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/UserCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/UserEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /users/{id}:
+    parameters: [ { $ref: '#/components/parameters/UserId' } ]
+    get:
+      operationId: getUser
+      tags: [Users]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/UserEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateUser
+      tags: [Users]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/UserUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/UserEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteUser
+      tags: [Users]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /medical-history:
+    get:
+      operationId: listMedicalHistory
+      tags: [MedicalHistory]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - name: patient_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedMedicalHistory' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createMedicalHistory
+      tags: [MedicalHistory]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/MedicalHistoryCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/MedicalHistoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /medical-history/{id}:
+    parameters: [ { $ref: '#/components/parameters/MedicalHistoryId' } ]
+    get:
+      operationId: getMedicalHistory
+      tags: [MedicalHistory]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/MedicalHistoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateMedicalHistory
+      tags: [MedicalHistory]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/MedicalHistoryUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/MedicalHistoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteMedicalHistory
+      tags: [MedicalHistory]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /patients/{id}/summary:
+    parameters: [ { $ref: '#/components/parameters/PatientId' } ]
+    get:
+      operationId: getPatientSummary
+      tags: [Clinical]
+      summary: Aggregate of every clinical sub-record for one patient.
+      description: |
+        Replaces the Laravel `OrthodonticsMedicalHistoryCrudController` aggregator.
+        Fetches in a single request the patient's general medical history, the
+        primary orthodontic record, all cephalometric analyses, the diagnostic
+        assets flags, recent mechanotherapy visits, and tooth measurements.
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PatientSummary' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /cephalometric-analyses:
+    get:
+      operationId: listCephalometricAnalyses
+      tags: [Clinical]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Sort'
+        - name: patient_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedCephalometricAnalyses' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createCephalometricAnalysis
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/CephalometricAnalysisCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/CephalometricAnalysisEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /cephalometric-analyses/{id}:
+    parameters: [ { $ref: '#/components/parameters/ClinicalRecordId' } ]
+    get:
+      operationId: getCephalometricAnalysis
+      tags: [Clinical]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/CephalometricAnalysisEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateCephalometricAnalysis
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/CephalometricAnalysisUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/CephalometricAnalysisEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteCephalometricAnalysis
+      tags: [Clinical]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /diagnostic-assets:
+    get:
+      operationId: listDiagnosticAssets
+      tags: [Clinical]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: patient_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedDiagnosticAssets' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createDiagnosticAsset
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticAssetCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticAssetEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /diagnostic-assets/{id}:
+    parameters: [ { $ref: '#/components/parameters/ClinicalRecordId' } ]
+    get:
+      operationId: getDiagnosticAsset
+      tags: [Clinical]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticAssetEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateDiagnosticAsset
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticAssetUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/DiagnosticAssetEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteDiagnosticAsset
+      tags: [Clinical]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /mechanotherapy-visits:
+    get:
+      operationId: listMechanotherapyVisits
+      tags: [Clinical]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - name: patient_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedMechanotherapyVisits' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createMechanotherapyVisit
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/MechanotherapyVisitCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/MechanotherapyVisitEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /mechanotherapy-visits/{id}:
+    parameters: [ { $ref: '#/components/parameters/ClinicalRecordId' } ]
+    get:
+      operationId: getMechanotherapyVisit
+      tags: [Clinical]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/MechanotherapyVisitEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateMechanotherapyVisit
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/MechanotherapyVisitUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/MechanotherapyVisitEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteMechanotherapyVisit
+      tags: [Clinical]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /tooth-measurements:
+    get:
+      operationId: listToothMeasurements
+      tags: [Clinical]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: patient_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedToothMeasurements' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createToothMeasurement
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ToothMeasurementCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/ToothMeasurementEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /tooth-measurements/{id}:
+    parameters: [ { $ref: '#/components/parameters/ClinicalRecordId' } ]
+    get:
+      operationId: getToothMeasurement
+      tags: [Clinical]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/ToothMeasurementEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateToothMeasurement
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ToothMeasurementUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/ToothMeasurementEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteToothMeasurement
+      tags: [Clinical]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /orthodontics-medical-histories:
+    get:
+      operationId: listOrthodonticsMedicalHistories
+      tags: [Clinical]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+        - name: patient_id
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/PaginatedOrthodonticsMedicalHistories' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createOrthodonticsMedicalHistory
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/OrthodonticsMedicalHistoryCreate' } } }
+      responses:
+        '201':
+          description: created
+          content: { application/json: { schema: { $ref: '#/components/schemas/OrthodonticsMedicalHistoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /orthodontics-medical-histories/{id}:
+    parameters: [ { $ref: '#/components/parameters/ClinicalRecordId' } ]
+    get:
+      operationId: getOrthodonticsMedicalHistory
+      tags: [Clinical]
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/OrthodonticsMedicalHistoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateOrthodonticsMedicalHistory
+      tags: [Clinical]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/OrthodonticsMedicalHistoryUpdate' } } }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { $ref: '#/components/schemas/OrthodonticsMedicalHistoryEnvelope' } } }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+    delete:
+      operationId: deleteOrthodonticsMedicalHistory
+      tags: [Clinical]
+      responses:
+        '204': { description: deleted }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT issued by `POST /auth/login` (defined in a later sub-step).
+        The token's signing key and TTL come from `JWT_SECRET` / `JWT_TTL`
+        in the shared `.env` file.
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: 1-indexed page number.
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    PerPage:
+      name: per_page
+      in: query
+      description: Page size.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+
+    Search:
+      name: search
+      in: query
+      description: Case-insensitive substring match across the resource's searchable columns.
+      schema:
+        type: string
+
+    Sort:
+      name: sort
+      in: query
+      description: Column to sort by. Prefix with `-` for descending (e.g. `-created_at`).
+      schema:
+        type: string
+
+    PatientId:
+      name: id
+      in: path
+      required: true
+      description: Patient ID.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+
+    AppointmentId:
+      name: id
+      in: path
+      required: true
+      description: Appointment ID.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+
+    InvoiceId:
+      name: id
+      in: path
+      required: true
+      description: Invoice ID.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+
+    CategoryId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+
+    TreatmentId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+
+    VisitTreatmentId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+
+    UserId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+
+    MedicalHistoryId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+
+    ClinicalRecordId:
+      name: id
+      in: path
+      required: true
+      description: Polymorphic clinical-record id — shared by cephalometric_analyses, diagnostic_assets, mechanotherapy_visits, tooth_measurements, orthodontics_medical_histories.
+      schema: { type: integer, format: int64, minimum: 1 }
+
+  schemas:
+
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          description: User's email address. Named `username` to match Laravel's login input.
+          example: doctor@example.com
+        password:
+          type: string
+          format: password
+          minLength: 1
+
+    LoginResponse:
+      type: object
+      required: [access_token, token_type, expires_in, user]
+      properties:
+        access_token:
+          type: string
+          description: "Signed JWT (HS256). Use as `Authorization: Bearer <token>`."
+        token_type:
+          type: string
+          enum: [Bearer]
+        expires_in:
+          type: integer
+          description: Seconds remaining until the token expires.
+        user:
+          $ref: '#/components/schemas/AuthUser'
+
+    AuthUser:
+      type: object
+      required: [id, name, email]
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+
+    Patient:
+      type: object
+      required:
+        - id
+        - first_name
+        - last_name
+        - full_name
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64
+        first_name:
+          type: string
+          maxLength: 100
+        last_name:
+          type: string
+          maxLength: 100
+        full_name:
+          type: string
+          description: Computed accessor — `first_name` + " " + `last_name`. Read-only.
+          readOnly: true
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+          nullable: true
+        phone:
+          type: string
+          maxLength: 20
+          nullable: true
+        email:
+          type: string
+          format: email
+          maxLength: 100
+          nullable: true
+        address:
+          type: string
+          maxLength: 255
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    PatientCreate:
+      type: object
+      required: [first_name, last_name]
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        date_of_birth:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+        phone:
+          type: string
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 100
+        address:
+          type: string
+          maxLength: 255
+
+    PatientUpdate:
+      type: object
+      description: |
+        All fields are optional. Only keys present in the request body
+        are written; explicit `null` clears a nullable column.
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        gender:
+          type: string
+          enum: [Male, Female, Other]
+          nullable: true
+        phone:
+          type: string
+          maxLength: 20
+          nullable: true
+        email:
+          type: string
+          format: email
+          maxLength: 100
+          nullable: true
+        address:
+          type: string
+          maxLength: 255
+          nullable: true
+
+    PatientEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Patient'
+
+    AppointmentPatient:
+      type: object
+      description: Minimal patient embed used inside appointment responses.
+      required: [id, full_name]
+      properties:
+        id:
+          type: integer
+          format: int64
+        full_name:
+          type: string
+
+    AppointmentUser:
+      type: object
+      description: Minimal user embed used inside appointment responses.
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+
+    Appointment:
+      type: object
+      required:
+        - id
+        - patient_id
+        - user_id
+        - appointment_date_time
+        - duration_minutes
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64
+        patient_id:
+          type: integer
+          format: int64
+        user_id:
+          type: integer
+          format: int64
+        appointment_date_time:
+          type: string
+          format: date-time
+        duration_minutes:
+          type: integer
+          minimum: 1
+        reason_for_visit:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [Scheduled, Confirmed, Completed, Cancelled]
+        patient:
+          $ref: '#/components/schemas/AppointmentPatient'
+        user:
+          $ref: '#/components/schemas/AppointmentUser'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    AppointmentCreate:
+      type: object
+      required: [patient_id, user_id, appointment_date_time]
+      properties:
+        patient_id:
+          type: integer
+          format: int64
+          minimum: 1
+        user_id:
+          type: integer
+          format: int64
+          minimum: 1
+        appointment_date_time:
+          type: string
+          format: date-time
+        duration_minutes:
+          type: integer
+          minimum: 1
+          maximum: 600
+          default: 30
+        reason_for_visit:
+          type: string
+        status:
+          type: string
+          enum: [Scheduled, Confirmed, Completed, Cancelled]
+          default: Scheduled
+
+    AppointmentUpdate:
+      type: object
+      description: |
+        Partial merge — only present fields are written. Same nullable
+        caveat as PatientUpdate.
+      properties:
+        patient_id:
+          type: integer
+          format: int64
+          minimum: 1
+        user_id:
+          type: integer
+          format: int64
+          minimum: 1
+        appointment_date_time:
+          type: string
+          format: date-time
+        duration_minutes:
+          type: integer
+          minimum: 1
+          maximum: 600
+        reason_for_visit:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [Scheduled, Confirmed, Completed, Cancelled]
+
+    AppointmentEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Appointment'
+
+    PaginatedAppointments:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Appointment'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    InvoiceAppointment:
+      type: object
+      description: Minimal appointment embed used inside invoice responses.
+      required: [id, appointment_date_time]
+      properties:
+        id:
+          type: integer
+          format: int64
+        appointment_date_time:
+          type: string
+          format: date-time
+        patient:
+          $ref: '#/components/schemas/AppointmentPatient'
+
+    Invoice:
+      type: object
+      required:
+        - id
+        - appointment_id
+        - invoice_date
+        - total_amount
+        - amount_paid
+        - payment_status
+        - remaining_balance
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64
+        appointment_id:
+          type: integer
+          format: int64
+        invoice_date:
+          type: string
+          format: date
+        total_amount:
+          type: string
+          description: "Decimal as string with 2-fraction precision. Matches Laravel's `decimal:2` cast."
+          example: "1500.00"
+        amount_paid:
+          type: string
+          description: Decimal as string with 2-fraction precision.
+          example: "500.00"
+        remaining_balance:
+          type: string
+          description: Computed accessor — `total_amount` − `amount_paid`. Read-only.
+          readOnly: true
+          example: "1000.00"
+        payment_status:
+          type: string
+          enum: [Pending, Paid, Partial]
+        appointment:
+          $ref: '#/components/schemas/InvoiceAppointment'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    InvoiceCreate:
+      type: object
+      required: [appointment_id, invoice_date, total_amount]
+      properties:
+        appointment_id:
+          type: integer
+          format: int64
+          minimum: 1
+        invoice_date:
+          type: string
+          format: date
+        total_amount:
+          type: string
+          description: Decimal as string, up to 2 fraction digits. Must be ≥ 0.
+        amount_paid:
+          type: string
+          description: Decimal as string. Must be 0 ≤ amount_paid ≤ total_amount.
+          default: "0.00"
+        payment_status:
+          type: string
+          enum: [Pending, Paid, Partial]
+          default: Pending
+
+    InvoiceUpdate:
+      type: object
+      description: |
+        Partial merge — only present fields are written. Same nullable
+        caveat as PatientUpdate / AppointmentUpdate.
+      properties:
+        invoice_date:
+          type: string
+          format: date
+        total_amount:
+          type: string
+        amount_paid:
+          type: string
+        payment_status:
+          type: string
+          enum: [Pending, Paid, Partial]
+
+    InvoiceEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Invoice'
+
+    PaginatedInvoices:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invoice'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    Category:
+      type: object
+      required: [id, parent_id, name, slug, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        parent_id: { type: integer, format: int64 }
+        name: { type: string, maxLength: 255 }
+        slug: { type: string, maxLength: 255 }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        deleted_at: { type: string, format: date-time, nullable: true }
+    CategoryCreate:
+      type: object
+      required: [name]
+      properties:
+        parent_id: { type: integer, format: int64, minimum: 0, default: 0 }
+        name: { type: string, minLength: 1, maxLength: 255 }
+        slug: { type: string, maxLength: 255 }
+    CategoryUpdate:
+      type: object
+      properties:
+        parent_id: { type: integer, format: int64, minimum: 0 }
+        name: { type: string, minLength: 1, maxLength: 255 }
+        slug: { type: string, maxLength: 255 }
+    CategoryEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/Category' } }
+    PaginatedCategories:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/Category' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    Treatment:
+      type: object
+      required: [id, name, standard_cost, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        category_id: { type: integer, format: int64, nullable: true }
+        name: { type: string, maxLength: 100 }
+        description: { type: string, nullable: true }
+        standard_cost: { type: string, example: "150.00" }
+        category:
+          type: object
+          nullable: true
+          properties:
+            id: { type: integer, format: int64 }
+            name: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        deleted_at: { type: string, format: date-time, nullable: true }
+    TreatmentCreate:
+      type: object
+      required: [name, standard_cost]
+      properties:
+        category_id: { type: integer, format: int64, minimum: 1 }
+        name: { type: string, minLength: 1, maxLength: 100 }
+        description: { type: string }
+        standard_cost: { type: string }
+    TreatmentUpdate:
+      type: object
+      properties:
+        category_id: { type: integer, format: int64, minimum: 1, nullable: true }
+        name: { type: string, minLength: 1, maxLength: 100 }
+        description: { type: string, nullable: true }
+        standard_cost: { type: string }
+    TreatmentEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/Treatment' } }
+    PaginatedTreatments:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/Treatment' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    VisitTreatment:
+      type: object
+      required: [id, appointment_id, treatment_id, quantity, actual_cost, total_cost, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        user_id: { type: integer, format: int64, nullable: true }
+        appointment_id: { type: integer, format: int64 }
+        treatment_id: { type: integer, format: int64 }
+        tooth_identifier: { type: string, maxLength: 5, nullable: true }
+        quantity: { type: integer, minimum: 1 }
+        actual_cost: { type: string }
+        total_cost: { type: string, readOnly: true, description: "actual_cost × quantity (computed)." }
+        notes: { type: string, nullable: true }
+        treatment:
+          type: object
+          nullable: true
+          properties:
+            id: { type: integer, format: int64 }
+            name: { type: string }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        deleted_at: { type: string, format: date-time, nullable: true }
+    VisitTreatmentCreate:
+      type: object
+      required: [appointment_id, treatment_id, actual_cost]
+      properties:
+        user_id: { type: integer, format: int64, minimum: 1 }
+        appointment_id: { type: integer, format: int64, minimum: 1 }
+        treatment_id: { type: integer, format: int64, minimum: 1 }
+        tooth_identifier: { type: string, maxLength: 5 }
+        quantity: { type: integer, minimum: 1, default: 1 }
+        actual_cost: { type: string }
+        notes: { type: string }
+    VisitTreatmentUpdate:
+      type: object
+      properties:
+        user_id: { type: integer, format: int64, minimum: 1, nullable: true }
+        tooth_identifier: { type: string, maxLength: 5, nullable: true }
+        quantity: { type: integer, minimum: 1 }
+        actual_cost: { type: string }
+        notes: { type: string, nullable: true }
+    VisitTreatmentEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/VisitTreatment' } }
+    PaginatedVisitTreatments:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/VisitTreatment' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    User:
+      type: object
+      required: [id, name, email, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string, maxLength: 255 }
+        email: { type: string, format: email, maxLength: 255 }
+        email_verified_at: { type: string, format: date-time, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        deleted_at: { type: string, format: date-time, nullable: true }
+    UserCreate:
+      type: object
+      required: [name, email, password]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 255 }
+        email: { type: string, format: email, maxLength: 255 }
+        password: { type: string, format: password, minLength: 8 }
+    UserUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 255 }
+        email: { type: string, format: email, maxLength: 255 }
+        password: { type: string, format: password, minLength: 8, description: "Optional. Omit to keep the existing password." }
+    UserEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/User' } }
+    PaginatedUsers:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/User' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    MedicalHistory:
+      type: object
+      required: [id, patient_id, condition_name, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        patient_id: { type: integer, format: int64 }
+        condition_name: { type: string, maxLength: 255 }
+        notes: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        deleted_at: { type: string, format: date-time, nullable: true }
+    MedicalHistoryCreate:
+      type: object
+      required: [patient_id, condition_name]
+      properties:
+        patient_id: { type: integer, format: int64, minimum: 1 }
+        condition_name: { type: string, minLength: 1, maxLength: 255 }
+        notes: { type: string }
+    MedicalHistoryUpdate:
+      type: object
+      properties:
+        condition_name: { type: string, minLength: 1, maxLength: 255 }
+        notes: { type: string, nullable: true }
+    MedicalHistoryEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/MedicalHistory' } }
+    PaginatedMedicalHistory:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/MedicalHistory' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    CephalometricAnalysis:
+      type: object
+      required: [id, patient_id, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        patient_id: { type: integer, format: int64 }
+        analysis_date: { type: string, format: date, nullable: true }
+        sna_degrees: { type: string, nullable: true }
+        snb_degrees: { type: string, nullable: true }
+        snpog_degrees: { type: string, nullable: true }
+        wits_appraisal_mm: { type: string, nullable: true }
+        sn_pa_prime: { type: string, nullable: true }
+        nl_ml_degrees: { type: string, nullable: true }
+        bjork_sum_degrees: { type: string, nullable: true }
+        n_go_me_degrees: { type: string, nullable: true }
+        go_gn_length_mm: { type: string, nullable: true }
+        interincisal_angle: { type: string, nullable: true }
+        conclusions: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    CephalometricAnalysisCreate:
+      type: object
+      required: [patient_id]
+      properties:
+        patient_id: { type: integer, format: int64, minimum: 1 }
+        analysis_date: { type: string, format: date }
+        sna_degrees: { type: string }
+        snb_degrees: { type: string }
+        snpog_degrees: { type: string }
+        wits_appraisal_mm: { type: string }
+        sn_pa_prime: { type: string }
+        nl_ml_degrees: { type: string }
+        bjork_sum_degrees: { type: string }
+        n_go_me_degrees: { type: string }
+        go_gn_length_mm: { type: string }
+        interincisal_angle: { type: string }
+        conclusions: { type: string }
+    CephalometricAnalysisUpdate:
+      type: object
+      properties:
+        analysis_date: { type: string, format: date, nullable: true }
+        sna_degrees: { type: string, nullable: true }
+        snb_degrees: { type: string, nullable: true }
+        snpog_degrees: { type: string, nullable: true }
+        wits_appraisal_mm: { type: string, nullable: true }
+        sn_pa_prime: { type: string, nullable: true }
+        nl_ml_degrees: { type: string, nullable: true }
+        bjork_sum_degrees: { type: string, nullable: true }
+        n_go_me_degrees: { type: string, nullable: true }
+        go_gn_length_mm: { type: string, nullable: true }
+        interincisal_angle: { type: string, nullable: true }
+        conclusions: { type: string, nullable: true }
+    CephalometricAnalysisEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/CephalometricAnalysis' } }
+    PaginatedCephalometricAnalyses:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/CephalometricAnalysis' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    DiagnosticAsset:
+      type: object
+      required: [id, patient_id, has_optg, has_trg, has_cbct, has_biometry, has_photos, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        patient_id: { type: integer, format: int64 }
+        has_optg: { type: boolean }
+        has_trg: { type: boolean }
+        has_cbct: { type: boolean }
+        has_biometry: { type: boolean }
+        has_photos: { type: boolean }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    DiagnosticAssetCreate:
+      type: object
+      required: [patient_id]
+      properties:
+        patient_id: { type: integer, format: int64, minimum: 1 }
+        has_optg: { type: boolean, default: false }
+        has_trg: { type: boolean, default: false }
+        has_cbct: { type: boolean, default: false }
+        has_biometry: { type: boolean, default: false }
+        has_photos: { type: boolean, default: false }
+    DiagnosticAssetUpdate:
+      type: object
+      properties:
+        has_optg: { type: boolean }
+        has_trg: { type: boolean }
+        has_cbct: { type: boolean }
+        has_biometry: { type: boolean }
+        has_photos: { type: boolean }
+    DiagnosticAssetEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/DiagnosticAsset' } }
+    PaginatedDiagnosticAssets:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/DiagnosticAsset' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    MechanotherapyVisit:
+      type: object
+      required: [id, patient_id, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        patient_id: { type: integer, format: int64 }
+        visit_date: { type: string, format: date, nullable: true }
+        procedure_notes: { type: string, nullable: true }
+        recommendations: { type: string, nullable: true }
+        doctor_signature: { type: string, maxLength: 100, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    MechanotherapyVisitCreate:
+      type: object
+      required: [patient_id]
+      properties:
+        patient_id: { type: integer, format: int64, minimum: 1 }
+        visit_date: { type: string, format: date }
+        procedure_notes: { type: string }
+        recommendations: { type: string }
+        doctor_signature: { type: string, maxLength: 100 }
+    MechanotherapyVisitUpdate:
+      type: object
+      properties:
+        visit_date: { type: string, format: date, nullable: true }
+        procedure_notes: { type: string, nullable: true }
+        recommendations: { type: string, nullable: true }
+        doctor_signature: { type: string, maxLength: 100, nullable: true }
+    MechanotherapyVisitEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/MechanotherapyVisit' } }
+    PaginatedMechanotherapyVisits:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/MechanotherapyVisit' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    ToothMeasurement:
+      type: object
+      required: [id, patient_id, tooth_number, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        patient_id: { type: integer, format: int64 }
+        tooth_number: { type: integer, minimum: 0, maximum: 127 }
+        mesiodistal_width_mm: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    ToothMeasurementCreate:
+      type: object
+      required: [patient_id, tooth_number]
+      properties:
+        patient_id: { type: integer, format: int64, minimum: 1 }
+        tooth_number: { type: integer, minimum: 0, maximum: 127 }
+        mesiodistal_width_mm: { type: string }
+    ToothMeasurementUpdate:
+      type: object
+      properties:
+        tooth_number: { type: integer, minimum: 0, maximum: 127 }
+        mesiodistal_width_mm: { type: string, nullable: true }
+    ToothMeasurementEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/ToothMeasurement' } }
+    PaginatedToothMeasurements:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/ToothMeasurement' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    OrthodonticsMedicalHistory:
+      type: object
+      required: [id, patient_id, created_at, updated_at]
+      properties:
+        id: { type: integer, format: int64 }
+        patient_id: { type: integer, format: int64 }
+        main_complaints: { type: string, nullable: true }
+        functional_disturbances: { type: string, nullable: true }
+        ent_pathology: { type: string, nullable: true }
+        postural_disturbances: { type: string, nullable: true }
+        biometric_findings: { type: string, nullable: true }
+        treatment_plan: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        deleted_at: { type: string, format: date-time, nullable: true }
+    OrthodonticsMedicalHistoryCreate:
+      type: object
+      required: [patient_id]
+      properties:
+        patient_id: { type: integer, format: int64, minimum: 1 }
+        main_complaints: { type: string }
+        functional_disturbances: { type: string }
+        ent_pathology: { type: string }
+        postural_disturbances: { type: string }
+        biometric_findings: { type: string }
+        treatment_plan: { type: string }
+    OrthodonticsMedicalHistoryUpdate:
+      type: object
+      properties:
+        main_complaints: { type: string, nullable: true }
+        functional_disturbances: { type: string, nullable: true }
+        ent_pathology: { type: string, nullable: true }
+        postural_disturbances: { type: string, nullable: true }
+        biometric_findings: { type: string, nullable: true }
+        treatment_plan: { type: string, nullable: true }
+    OrthodonticsMedicalHistoryEnvelope:
+      type: object
+      required: [data]
+      properties: { data: { $ref: '#/components/schemas/OrthodonticsMedicalHistory' } }
+    PaginatedOrthodonticsMedicalHistories:
+      type: object
+      required: [data, meta]
+      properties:
+        data: { type: array, items: { $ref: '#/components/schemas/OrthodonticsMedicalHistory' } }
+        meta: { $ref: '#/components/schemas/PaginationMeta' }
+
+    PatientSummary:
+      type: object
+      description: |
+        Aggregated clinical snapshot for one patient — replaces Laravel's
+        `OrthodonticsMedicalHistoryCrudController` rollup.
+      required: [patient_id]
+      properties:
+        patient_id: { type: integer, format: int64 }
+        medical_history:
+          type: array
+          items: { $ref: '#/components/schemas/MedicalHistory' }
+        orthodontics_medical_history:
+          $ref: '#/components/schemas/OrthodonticsMedicalHistory'
+        cephalometric_analyses:
+          type: array
+          items: { $ref: '#/components/schemas/CephalometricAnalysis' }
+        diagnostic_assets:
+          type: array
+          items: { $ref: '#/components/schemas/DiagnosticAsset' }
+        mechanotherapy_visits:
+          type: array
+          items: { $ref: '#/components/schemas/MechanotherapyVisit' }
+        tooth_measurements:
+          type: array
+          items: { $ref: '#/components/schemas/ToothMeasurement' }
+
+    PaginatedPatients:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Patient'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    PaginationMeta:
+      type: object
+      required: [current_page, per_page, total, last_page]
+      properties:
+        current_page:
+          type: integer
+          minimum: 1
+        per_page:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          format: int64
+          minimum: 0
+        last_page:
+          type: integer
+          minimum: 1
+
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          description: Human-readable error message.
+
+    ValidationError:
+      type: object
+      required: [message, errors]
+      properties:
+        message:
+          type: string
+          example: The given data was invalid.
+        errors:
+          type: object
+          description: Map of field name → list of error messages, matching Laravel's 422 shape.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  responses:
+
+    BadRequest:
+      description: Malformed query parameters or request body.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Missing or invalid bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ValidationError:
+      description: Request body failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
