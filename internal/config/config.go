@@ -219,7 +219,13 @@ func Load() (*Config, error) {
 			Key:   os.Getenv("APP_KEY"),
 			Debug: getEnvBool("APP_DEBUG", false),
 			URL:   getEnv("APP_URL", "http://localhost"),
-			Port:  getEnvInt("HTTP_PORT", 8080),
+			// Port precedence: PORT (injected by serverless/PaaS runtimes
+			// like Vercel's executable runtime, Cloud Run, Railway, Heroku)
+			// wins, then our own HTTP_PORT, then 8080. Hosting platforms
+			// pick the port and expect the server to bind exactly there;
+			// ignoring $PORT is why an executable-runtime deploy never
+			// becomes reachable.
+			Port: firstPort("PORT", "HTTP_PORT", 8080),
 		},
 		DB: DBConfig{
 			Connection:  getEnv("DB_CONNECTION", "mysql"),
@@ -305,6 +311,21 @@ func getEnvInt(key string, fallback int) int {
 		return fallback
 	}
 	return n
+}
+
+// firstPort returns the first of the named env vars that holds a valid
+// int, else fallback. Used so a platform-injected PORT takes precedence
+// over our own HTTP_PORT.
+func firstPort(primary, secondary string, fallback int) int {
+	for _, key := range []string{primary, secondary} {
+		if v := os.Getenv(key); v != "" {
+			if n, err := strconv.Atoi(v); err == nil {
+				return n
+			}
+			log.Printf("config: %s=%q is not an int; ignoring", key, v)
+		}
+	}
+	return fallback
 }
 
 func getEnvBool(key string, fallback bool) bool {
