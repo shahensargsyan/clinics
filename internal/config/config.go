@@ -79,8 +79,12 @@ type RedisConfig struct {
 // RegisterTLS() before gorm.Open(). DSN itself stays a pure formatter
 // (no IO, no side effects) so it remains safe to call repeatedly.
 func (c DBConfig) DSN() string {
+	// timeout=2s caps the initial TCP+TLS dial — without it, an
+	// unreachable host can spin for ~30s on the OS's TCP retry. Fast
+	// failure is the goal here; read/write timeouts are intentionally
+	// left at "no limit" so legitimate slow queries don't get killed.
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=2s",
 		c.Username, c.Password, c.Host, c.Port, c.Database,
 	)
 	if c.SSLMode != "" {
