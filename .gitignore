@@ -52,3 +52,4 @@ Thumbs.db
 # CI/builds don't depend on local code-gen. Uncomment if you decide to
 # regenerate on every build instead.
 # /internal/api/openapi.gen.go
+bin/api

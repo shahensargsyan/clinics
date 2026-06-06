@@ -98,7 +98,7 @@ func openDB(dsn string, debug bool) (*gorm.DB, error) {
 
 // newRouter builds the bare Gin engine. The strict server's
 // RegisterHandlers is responsible for the operation routes; everything
-// else (health, future static/asset serving) is wired here.
+// else (health, docs, future static/asset serving) is wired here.
 func newRouter(debug bool) *gin.Engine {
 	if !debug {
 		gin.SetMode(gin.ReleaseMode)
@@ -108,5 +108,46 @@ func newRouter(debug bool) *gin.Engine {
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
+
+	// /openapi.json serves the spec embedded in openapi.gen.go. /docs is a
+	// stock Swagger UI loaded from a CDN and pointed at /openapi.json —
+	// no extra Go deps required. Both are public (no auth) so the docs
+	// are reachable for anyone exploring the API.
+	r.GET("/openapi.json", func(c *gin.Context) {
+		spec, err := api.GetSwagger()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, spec)
+	})
+	r.GET("/docs", func(c *gin.Context) {
+		c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(swaggerUIHTML))
+	})
+
 	return r
 }
+
+const swaggerUIHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clinics API Docs</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+  <style>body{margin:0}</style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    window.onload = function() {
+      window.ui = SwaggerUIBundle({
+        url: '/openapi.json',
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        persistAuthorization: true
+      });
+    };
+  </script>
+</body>
+</html>`
