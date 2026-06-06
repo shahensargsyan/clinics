@@ -12,6 +12,7 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+	"strings"
 
 	gomysql "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -48,8 +49,13 @@ type DBConfig struct {
 	// (chain + hostname). The MySQL driver's native modes ("true",
 	// "skip-verify", "preferred") are intentionally not exposed — they
 	// don't map cleanly onto operator intent.
-	SSLMode     string
-	SSLRootCert string // PEM file path; required when SSLMode != "".
+	SSLMode string
+	// SSLRootCert is either a filesystem path to a PEM file OR the raw
+	// PEM-encoded CA bundle itself (anything starting with `-----BEGIN`).
+	// Inline form is intended for serverless platforms that can't ship a
+	// sidecar file but can inject multi-line env vars. Required when
+	// SSLMode != "".
+	SSLRootCert string
 }
 
 // tlsConfigName is the key we register the loaded *tls.Config under with
@@ -91,13 +97,13 @@ func (c DBConfig) RegisterTLS() error {
 	if c.SSLMode == "" {
 		return nil
 	}
-	caPEM, err := os.ReadFile(c.SSLRootCert)
+	caPEM, source, err := loadCABundle(c.SSLRootCert)
 	if err != nil {
-		return fmt.Errorf("config: read CA cert %q: %w", c.SSLRootCert, err)
+		return err
 	}
 	pool := x509.NewCertPool()
 	if !pool.AppendCertsFromPEM(caPEM) {
-		return fmt.Errorf("config: CA cert %q contained no PEM certificates", c.SSLRootCert)
+		return fmt.Errorf("config: CA bundle from %s contained no PEM certificates", source)
 	}
 	tlsCfg := &tls.Config{RootCAs: pool, MinVersion: tls.VersionTLS12}
 	switch c.SSLMode {
@@ -112,6 +118,21 @@ func (c DBConfig) RegisterTLS() error {
 		tlsCfg.VerifyPeerCertificate = verifyChainOnly(pool)
 	}
 	return gomysql.RegisterTLSConfig(tlsConfigName, tlsCfg)
+}
+
+// loadCABundle returns the PEM bytes for the CA bundle along with a
+// human-readable source label for error messages. It auto-detects
+// whether the input is inline PEM (starts with `-----BEGIN`) or a path
+// to a file containing PEM. Inline is the serverless-friendly form.
+func loadCABundle(s string) (pem []byte, source string, err error) {
+	if strings.HasPrefix(strings.TrimSpace(s), "-----BEGIN") {
+		return []byte(s), "inline DB_SSLROOTCERT value", nil
+	}
+	b, err := os.ReadFile(s)
+	if err != nil {
+		return nil, "", fmt.Errorf("config: read CA cert %q: %w", s, err)
+	}
+	return b, fmt.Sprintf("file %q", s), nil
 }
 
 // verifyChainOnly returns a tls.Config.VerifyPeerCertificate that
