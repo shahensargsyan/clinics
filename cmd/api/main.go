@@ -94,9 +94,16 @@ func openDB(dsn string, debug bool) (*gorm.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("db.DB: %w", err)
 	}
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
+	// Serverless-safe pool bounds. On Vercel each concurrent invocation
+	// is its own process; a high per-instance cap multiplied across
+	// horizontal scale-out would blow past Aiven's connection limit.
+	// Keep each instance frugal: at most 1 idle + 5 open.
+	sqlDB.SetMaxIdleConns(1)
+	sqlDB.SetMaxOpenConns(5)
+	// Cap idle lifetime tight so a frozen/thawed serverless instance
+	// doesn't reuse a connection Aiven already reaped server-side.
+	sqlDB.SetConnMaxLifetime(5 * time.Minute)
+	sqlDB.SetConnMaxIdleTime(time.Minute)
 	if err := sqlDB.Ping(); err != nil {
 		return nil, fmt.Errorf("ping: %w", err)
 	}

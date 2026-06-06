@@ -82,12 +82,23 @@ type RedisConfig struct {
 // RegisterTLS() before gorm.Open(). DSN itself stays a pure formatter
 // (no IO, no side effects) so it remains safe to call repeatedly.
 func (c DBConfig) DSN() string {
-	// timeout=2s caps the initial TCP+TLS dial — without it, an
-	// unreachable host can spin for ~30s on the OS's TCP retry. Fast
-	// failure is the goal here; read/write timeouts are intentionally
-	// left at "no limit" so legitimate slow queries don't get killed.
+	// Three separate timeouts — all are required to guarantee a
+	// fast-failing connection on serverless:
+	//   timeout      → TCP dial only. Does NOT cover the TLS or auth
+	//                  handshake. A reachable-but-misbehaving host (e.g.
+	//                  a TLS handshake stall against Aiven's strict SSL)
+	//                  passes the dial and then hangs here forever
+	//                  without the next two.
+	//   readTimeout  → bounds every read, INCLUDING the server's TLS +
+	//                  auth handshake packets. This is what converts a
+	//                  30s Vercel function-timeout into a clean, fast Go
+	//                  error.
+	//   writeTimeout → bounds every write, including the client handshake.
+	// 10s is well under typical serverless function ceilings yet generous
+	// enough not to kill healthy queries in this admin workload.
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=2s",
+		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"+
+			"&timeout=5s&readTimeout=10s&writeTimeout=10s",
 		c.Username, c.Password, c.Host, c.Port, c.Database,
 	)
 	switch c.SSLMode {
