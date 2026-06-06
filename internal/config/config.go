@@ -4,6 +4,8 @@
 package config
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"log"
 	"net"
@@ -11,6 +13,7 @@ import (
 	"runtime"
 	"strconv"
 
+	gomysql "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 )
 
@@ -38,7 +41,20 @@ type DBConfig struct {
 	Database   string
 	Username   string
 	Password   string
+
+	// SSLMode mirrors Postgres' libpq terminology because that's the
+	// vocabulary developers know. Supported values: "" (off, default),
+	// "verify-ca" (chain verified, hostname NOT checked), "verify-full"
+	// (chain + hostname). The MySQL driver's native modes ("true",
+	// "skip-verify", "preferred") are intentionally not exposed — they
+	// don't map cleanly onto operator intent.
+	SSLMode     string
+	SSLRootCert string // PEM file path; required when SSLMode != "".
 }
+
+// tlsConfigName is the key we register the loaded *tls.Config under with
+// go-sql-driver/mysql. The DSN references it as `tls=<this-name>`.
+const tlsConfigName = "clinics-tls"
 
 type JWTConfig struct {
 	Secret string
@@ -52,12 +68,78 @@ type RedisConfig struct {
 }
 
 // DSN returns the GORM/MySQL DSN string in the format expected by
-// gorm.io/driver/mysql.
+// gorm.io/driver/mysql. When SSLMode is set the DSN points at a TLS
+// config that must already be registered — callers must invoke
+// RegisterTLS() before gorm.Open(). DSN itself stays a pure formatter
+// (no IO, no side effects) so it remains safe to call repeatedly.
 func (c DBConfig) DSN() string {
-	return fmt.Sprintf(
+	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		c.Username, c.Password, c.Host, c.Port, c.Database,
 	)
+	if c.SSLMode != "" {
+		dsn += "&tls=" + tlsConfigName
+	}
+	return dsn
+}
+
+// RegisterTLS reads the CA root certificate referenced by SSLRootCert
+// and registers a *tls.Config with go-sql-driver/mysql under the name
+// embedded in DSN(). Must be called before gorm.Open() when SSLMode is
+// set. No-op when SSLMode is empty.
+func (c DBConfig) RegisterTLS() error {
+	if c.SSLMode == "" {
+		return nil
+	}
+	caPEM, err := os.ReadFile(c.SSLRootCert)
+	if err != nil {
+		return fmt.Errorf("config: read CA cert %q: %w", c.SSLRootCert, err)
+	}
+	pool := x509.NewCertPool()
+	if !pool.AppendCertsFromPEM(caPEM) {
+		return fmt.Errorf("config: CA cert %q contained no PEM certificates", c.SSLRootCert)
+	}
+	tlsCfg := &tls.Config{RootCAs: pool, MinVersion: tls.VersionTLS12}
+	switch c.SSLMode {
+	case "verify-full":
+		tlsCfg.ServerName = c.Host
+	case "verify-ca":
+		// libpq verify-ca: chain must validate, hostname is NOT checked.
+		// The Go stdlib bundles those two checks together, so we disable
+		// its automatic verification and run chain-only verification by
+		// hand via VerifyPeerCertificate.
+		tlsCfg.InsecureSkipVerify = true
+		tlsCfg.VerifyPeerCertificate = verifyChainOnly(pool)
+	}
+	return gomysql.RegisterTLSConfig(tlsConfigName, tlsCfg)
+}
+
+// verifyChainOnly returns a tls.Config.VerifyPeerCertificate that
+// validates the presented chain against `pool` but skips the hostname
+// match, matching libpq's `sslmode=verify-ca` semantics.
+func verifyChainOnly(pool *x509.CertPool) func([][]byte, [][]*x509.Certificate) error {
+	return func(rawCerts [][]byte, _ [][]*x509.Certificate) error {
+		if len(rawCerts) == 0 {
+			return fmt.Errorf("tls: server presented no certificate")
+		}
+		certs := make([]*x509.Certificate, 0, len(rawCerts))
+		for _, raw := range rawCerts {
+			cert, err := x509.ParseCertificate(raw)
+			if err != nil {
+				return err
+			}
+			certs = append(certs, cert)
+		}
+		opts := x509.VerifyOptions{Roots: pool}
+		if len(certs) > 1 {
+			opts.Intermediates = x509.NewCertPool()
+			for _, intermediate := range certs[1:] {
+				opts.Intermediates.AddCert(intermediate)
+			}
+		}
+		_, err := certs[0].Verify(opts)
+		return err
+	}
 }
 
 // Load reads the .env file and returns a populated Config. The env file
@@ -90,12 +172,14 @@ func Load() (*Config, error) {
 			Port:  getEnvInt("HTTP_PORT", 8080),
 		},
 		DB: DBConfig{
-			Connection: getEnv("DB_CONNECTION", "mysql"),
-			Host:       getEnv("DB_HOST", "127.0.0.1"),
-			Port:       getEnvInt("DB_PORT", 3306),
-			Database:   os.Getenv("DB_DATABASE"),
-			Username:   os.Getenv("DB_USERNAME"),
-			Password:   os.Getenv("DB_PASSWORD"),
+			Connection:  getEnv("DB_CONNECTION", "mysql"),
+			Host:        getEnv("DB_HOST", "127.0.0.1"),
+			Port:        getEnvInt("DB_PORT", 3306),
+			Database:    os.Getenv("DB_DATABASE"),
+			Username:    os.Getenv("DB_USERNAME"),
+			Password:    os.Getenv("DB_PASSWORD"),
+			SSLMode:     getEnv("DB_SSLMODE", ""),
+			SSLRootCert: getEnv("DB_SSLROOTCERT", ""),
 		},
 		JWT: JWTConfig{
 			Secret: os.Getenv("JWT_SECRET"),
@@ -116,6 +200,15 @@ func Load() (*Config, error) {
 	}
 	if cfg.JWT.Secret == "" {
 		return nil, fmt.Errorf("config: JWT_SECRET is required")
+	}
+	switch cfg.DB.SSLMode {
+	case "", "verify-ca", "verify-full":
+		// OK.
+	default:
+		return nil, fmt.Errorf("config: DB_SSLMODE must be one of '', 'verify-ca', 'verify-full' (got %q)", cfg.DB.SSLMode)
+	}
+	if cfg.DB.SSLMode != "" && cfg.DB.SSLRootCert == "" {
+		return nil, fmt.Errorf("config: DB_SSLROOTCERT is required when DB_SSLMODE=%s", cfg.DB.SSLMode)
 	}
 
 	cfg.DB.Host = resolveDBHost(cfg.DB.Host)

@@ -30,6 +30,10 @@ coverage.html
 .env.*
 !.env.example
 
+# Database TLS material — CA roots are technically public but keys/certs
+# living here often aren't, so the directory stays out of git as a group.
+/certs/
+
 # --- Editor / IDE ---
 .idea/
 .vscode/

@@ -30,6 +30,12 @@ func main() {
 		log.Fatalf("config: %v", err)
 	}
 
+	// Register the MySQL TLS config (if any) before any connection
+	// attempt. With DB_SSLMODE empty this is a no-op.
+	if err := cfg.DB.RegisterTLS(); err != nil {
+		log.Fatalf("db tls: %v", err)
+	}
+
 	db, err := openDB(cfg.DB.DSN(), cfg.App.Debug)
 	if err != nil {
 		log.Fatalf("db: %v", err)
