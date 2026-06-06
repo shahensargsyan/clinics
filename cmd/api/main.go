@@ -14,6 +14,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -119,6 +120,18 @@ func newRouter(debug bool) *gin.Engine {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 			return
 		}
+		// Rewrite servers to the host actually serving this docs page so
+		// Swagger UI's "Try it out" hits us instead of whatever the spec
+		// was authored with. Survives port changes, host header rewrites,
+		// and future reverse-proxy fronting.
+		scheme := "http"
+		if c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https" {
+			scheme = "https"
+		}
+		spec.Servers = openapi3.Servers{{
+			URL:         fmt.Sprintf("%s://%s", scheme, c.Request.Host),
+			Description: "Current host",
+		}}
 		c.JSON(http.StatusOK, spec)
 	})
 	r.GET("/docs", func(c *gin.Context) {

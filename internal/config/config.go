@@ -68,7 +68,7 @@ func (c DBConfig) DSN() string {
 func Load() (*Config, error) {
 	envPath := os.Getenv("CLINICS_ENV_FILE")
 	if envPath == "" {
-		envPath = "../laravel-doc/.env"
+		envPath = ".env"
 	}
 
 	switch _, err := os.Stat(envPath); {
