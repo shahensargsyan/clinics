@@ -96,9 +96,13 @@ func (c DBConfig) DSN() string {
 	//   writeTimeout → bounds every write, including the client handshake.
 	// 10s is well under typical serverless function ceilings yet generous
 	// enough not to kill healthy queries in this admin workload.
+	// Values chosen to fast-fail well under a 10s serverless function cap
+	// (Vercel Hobby): worst-case dial(3) + read(6) = 9s < 10s, so a stalled
+	// handshake returns a clean error before the platform kills the
+	// invocation. Healthy Aiven connects in ~2s, so there's ample headroom.
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"+
-			"&timeout=5s&readTimeout=10s&writeTimeout=10s",
+			"&timeout=3s&readTimeout=6s&writeTimeout=6s",
 		c.Username, c.Password, c.Host, c.Port, c.Database,
 	)
 	switch c.SSLMode {
