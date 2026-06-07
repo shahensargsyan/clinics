@@ -129,9 +129,20 @@ const swaggerUIHTML = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <title>Clinics API Docs</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
-  <style>body{margin:0}</style>
+  <style>
+    body{margin:0}
+    .topbar-guide{font:14px/1.4 system-ui,sans-serif;background:#1b1b1b;color:#fff;
+      padding:10px 16px;display:flex;gap:12px;align-items:center}
+    .topbar-guide a{color:#7dd3fc;text-decoration:none;font-weight:600}
+    .topbar-guide a:hover{text-decoration:underline}
+  </style>
 </head>
 <body>
+  <div class="topbar-guide">
+    <span>This is the auto-generated API reference.</span>
+    <a href="https://github.com/shahensargsyan/clinics/blob/main/docs/frontend-api-guide.md"
+       target="_blank" rel="noopener">Frontend integration guide &rarr;</a>
+  </div>
   <div id="swagger-ui"></div>
   <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
   <script>
