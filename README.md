@@ -5,10 +5,14 @@ Laravel/Backpack admin. The HTTP contract is defined in
 [`api/openapi.yaml`](api/openapi.yaml) and implemented with `oapi-codegen`
 strict-server handlers.
 
-> **Frontend developer? Start here →
-> [docs/frontend-api-guide.md](docs/frontend-api-guide.md)**
-> Step-by-step Angular integration: OpenAPI client generation, auth interceptor,
-> and how to consume the generated services.
+> **Frontend developer? Start here** — pick your stack:
+> - **Angular** → [docs/frontend-api-guide.md](docs/frontend-api-guide.md)
+>   (OpenAPI Generator + RxJS services + HTTP interceptor)
+> - **React** → [docs/frontend-react-api-guide.md](docs/frontend-react-api-guide.md)
+>   (Orval + TanStack Query + Ant Design)
+>
+> Both cover client generation from the spec, auth wiring, and consuming the
+> generated code against this API's pagination + error conventions.
 
 ## API reference
 
