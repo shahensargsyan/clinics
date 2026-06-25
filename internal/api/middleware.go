@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,8 @@ var publicOps = map[string]struct{}{
 
 // authMiddleware enforces the Authorization: Bearer <jwt> header on all
 // operations not listed in publicOps. The decoded user id is stashed on
-// the gin.Context for downstream handlers via userIDContextKey.
+// both the gin.Context (via userIDContextKey) and the request context
+// (via a custom key) so it's accessible from both interfaces.
 //
 // On failure the middleware returns errUnauthorized; handlerErrorFunc
 // converts that to a 401 JSON response. Doing it via a typed error keeps
@@ -36,6 +38,8 @@ func (s *Server) authMiddleware(next StrictHandlerFunc, operationID string) Stri
 			return nil, errUnauthorized
 		}
 		ctx.Set(userIDContextKey, uid)
+		// Also store on the request context for handlers that receive context.Context
+		ctx.Request = ctx.Request.WithContext(context.WithValue(ctx.Request.Context(), userIDContextKey, uid))
 		return next(ctx, request)
 	}
 }

@@ -52,6 +52,52 @@ func (s *Server) ListPatients(ctx context.Context, req ListPatientsRequestObject
 	return ListPatients200JSONResponse{Data: out, Meta: meta}, nil
 }
 
+// ListDoctorPatients lists the patients "assigned" to the authenticated
+// user. There is no patients.user_id column, so assignment is derived: a
+// patient belongs to the doctor if they share at least one appointment
+// (appointments.user_id = me). The doctor filter is expressed as an IN
+// subquery so the outer query stays single-table — that keeps the shared
+// search/sort/paginate helpers (which use unqualified column names)
+// unambiguous and avoids needing DISTINCT.
+func (s *Server) ListDoctorPatients(ctx context.Context, req ListDoctorPatientsRequestObject) (ListDoctorPatientsResponseObject, error) {
+	uid, ok := ctx.Value(userIDContextKey).(uint)
+	if !ok {
+		// authMiddleware should guarantee this; guard anyway.
+		return nil, errUnauthorized
+	}
+
+	opts := normalize(req.Params.Page, req.Params.PerPage, req.Params.Search, req.Params.Sort)
+
+	assigned := s.DB.WithContext(ctx).
+		Model(&models.Appointment{}).
+		Select("patient_id").
+		Where("user_id = ?", uid)
+
+	base := s.DB.WithContext(ctx).Model(&models.Patient{}).
+		Where("id IN (?)", assigned)
+	base = applySearch(base, opts.search, patientSearchCols)
+
+	var total int64
+	if err := base.Session(&gorm.Session{}).Count(&total).Error; err != nil {
+		return nil, err
+	}
+
+	dataQ := base.Session(&gorm.Session{})
+	dataQ = applySort(dataQ, opts.sortCol, opts.sortDir, patientSortCols)
+	dataQ, meta := applyPaginate(dataQ, opts.page, opts.perPage, total)
+
+	var rows []models.Patient
+	if err := dataQ.Find(&rows).Error; err != nil {
+		return nil, err
+	}
+
+	out := make([]Patient, 0, len(rows))
+	for i := range rows {
+		out = append(out, toAPIPatient(&rows[i]))
+	}
+	return ListDoctorPatients200JSONResponse{Data: out, Meta: meta}, nil
+}
+
 func (s *Server) CreatePatient(ctx context.Context, req CreatePatientRequestObject) (CreatePatientResponseObject, error) {
 	if req.Body == nil {
 		return validation422Create("Request body is required.", nil), nil

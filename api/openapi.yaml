@@ -733,6 +733,36 @@ paths:
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
 
+  /doctorpatients:
+    get:
+      operationId: listDoctorPatients
+      tags: [Patients]
+      summary: List patients assigned to the logged-in user (doctor/clinician).
+      description: |
+        Returns paginated list of patients where `user_id` matches the
+        authenticated user's ID. Uses the same search and sort parameters as
+        `/patients`, but filtered to the doctor's assigned patients.
+
+        `search` matches against `first_name`, `last_name`, `email`, and
+        `phone` (case-insensitive LIKE).
+
+        Sortable columns: `id`, `first_name`, `last_name`, `date_of_birth`,
+        `email`, `created_at`, `updated_at`.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: Paginated list of patients assigned to the logged-in user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPatients'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
   /cephalometric-analyses:
     get:
       operationId: listCephalometricAnalyses

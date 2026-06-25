@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -45,7 +46,7 @@ func Build() (*Built, error) {
 	if err != nil {
 		return nil, fmt.Errorf("db: %w", err)
 	}
-	engine := newRouter(cfg.App.Debug)
+	engine := newRouter(cfg.App.Debug, cfg.App.AllowedOrigins)
 	jwtTTL := time.Duration(cfg.JWT.TTL) * time.Minute
 	api.NewServer(db, []byte(cfg.JWT.Secret), jwtTTL).Register(engine)
 	return &Built{Engine: engine, Config: cfg, DB: db}, nil
@@ -86,12 +87,12 @@ func openDB(dsn string, debug bool) (*gorm.DB, error) {
 
 // newRouter builds the Gin engine: health, docs, and (via RegisterHandlers
 // inside Build) the generated API routes.
-func newRouter(debug bool) *gin.Engine {
+func newRouter(debug bool, allowedOrigins []string) *gin.Engine {
 	if !debug {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	r := gin.New()
-	r.Use(gin.Logger(), gin.Recovery())
+	r.Use(gin.Logger(), gin.Recovery(), corsMiddleware(allowedOrigins))
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
@@ -121,6 +122,29 @@ func newRouter(debug bool) *gin.Engine {
 	})
 
 	return r
+}
+
+// corsMiddleware configures cross-origin access for browser clients (the
+// Vite/Antd admin SPA). The allow-list comes from CORS_ALLOWED_ORIGINS;
+// a single "*" opens it to any origin but then forbids credentials, per
+// the CORS spec. Authorization is in the allowed headers so the bearer
+// token survives the preflight.
+func corsMiddleware(allowedOrigins []string) gin.HandlerFunc {
+	cfg := cors.Config{
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Authorization", "Content-Type", "Accept", "Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}
+	if len(allowedOrigins) == 1 && allowedOrigins[0] == "*" {
+		// Wildcard origin and credentials are mutually exclusive in browsers.
+		cfg.AllowAllOrigins = true
+		cfg.AllowCredentials = false
+	} else {
+		cfg.AllowOrigins = allowedOrigins
+	}
+	return cors.New(cfg)
 }
 
 const swaggerUIHTML = `<!DOCTYPE html>

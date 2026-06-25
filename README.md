@@ -9,7 +9,9 @@ strict-server handlers.
 > - **Angular** → [docs/frontend-api-guide.md](docs/frontend-api-guide.md)
 >   (OpenAPI Generator + RxJS services + HTTP interceptor)
 > - **React** → [docs/frontend-react-api-guide.md](docs/frontend-react-api-guide.md)
->   (Orval + TanStack Query + Ant Design)
+>   (Orval + TanStack Query + Ant Design — setup & patterns)
+> - **React feature build** → [docs/frontend-patient-dashboard-guide.md](docs/frontend-patient-dashboard-guide.md)
+>   (login, patient create, and the 5-tab patient management dashboard)
 >
 > Both cover client generation from the spec, auth wiring, and consuming the
 > generated code against this API's pagination + error conventions.

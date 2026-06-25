@@ -33,6 +33,12 @@ type AppConfig struct {
 	Debug bool
 	URL   string
 	Port  int // HTTP listener port; Go-service-only, not in the Laravel .env.
+	// AllowedOrigins is the CORS allow-list (browser origins permitted to
+	// call the API). Read from CORS_ALLOWED_ORIGINS (comma-separated). A
+	// single "*" allows any origin (credentials are then disabled by the
+	// middleware, per the CORS spec). Defaults to the common local dev
+	// ports so a Vite/CRA/Angular dev server works out of the box.
+	AllowedOrigins []string
 }
 
 type DBConfig struct {
@@ -230,6 +236,11 @@ func Load() (*Config, error) {
 			// ignoring $PORT is why an executable-runtime deploy never
 			// becomes reachable.
 			Port: firstPort("PORT", "HTTP_PORT", 8080),
+			AllowedOrigins: getEnvCSV("CORS_ALLOWED_ORIGINS", []string{
+				"http://localhost:5173", // Vite
+				"http://localhost:3000", // CRA / Next dev
+				"http://localhost:4200", // Angular
+			}),
 		},
 		DB: DBConfig{
 			Connection:  getEnv("DB_CONNECTION", "mysql"),
@@ -287,6 +298,15 @@ func resolveDBHost(host string) string {
 	if host == "" || host == "localhost" || host == "127.0.0.1" {
 		return host
 	}
+	// The localhost fallback is ONLY for the Docker-service-name case: a bare
+	// single-label hostname like "mysql-doc". A fully-qualified domain
+	// (contains a dot — e.g. a managed-DB endpoint such as Aiven) is a real
+	// remote host; never rewrite it to localhost, even if a DNS lookup
+	// transiently fails. Doing so would silently point a production-style
+	// connection at the local loopback.
+	if strings.Contains(host, ".") {
+		return host
+	}
 	if _, err := net.LookupHost(host); err == nil {
 		return host
 	}
@@ -330,6 +350,26 @@ func firstPort(primary, secondary string, fallback int) int {
 		}
 	}
 	return fallback
+}
+
+// getEnvCSV parses a comma-separated env var into a trimmed, non-empty
+// slice, returning fallback when unset.
+func getEnvCSV(key string, fallback []string) []string {
+	v := os.Getenv(key)
+	if v == "" {
+		return fallback
+	}
+	parts := strings.Split(v, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if p = strings.TrimSpace(p); p != "" {
+			out = append(out, p)
+		}
+	}
+	if len(out) == 0 {
+		return fallback
+	}
+	return out
 }
 
 func getEnvBool(key string, fallback bool) bool {
