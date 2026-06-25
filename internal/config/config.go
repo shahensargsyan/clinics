@@ -237,9 +237,10 @@ func Load() (*Config, error) {
 			// becomes reachable.
 			Port: firstPort("PORT", "HTTP_PORT", 8080),
 			AllowedOrigins: getEnvCSV("CORS_ALLOWED_ORIGINS", []string{
-				"http://localhost:5173", // Vite
-				"http://localhost:3000", // CRA / Next dev
-				"http://localhost:4200", // Angular
+				"https://clinics-front-henna.vercel.app", // prod admin SPA
+				"http://localhost:5173",                  // Vite
+				"http://localhost:3000",                  // CRA / Next dev
+				"http://localhost:4200",                  // Angular
 			}),
 		},
 		DB: DBConfig{
